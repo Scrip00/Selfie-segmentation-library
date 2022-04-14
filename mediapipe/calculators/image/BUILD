@@ -799,3 +799,28 @@ cc_test(
         "@com_google_absl//absl/strings",
     ],
 )
+
+cc_library(
+    name = "background_masking_calculator",
+    srcs = ["background_masking_calculator.cc"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//mediapipe/framework/calculator_framework.h",
+        "//mediapipe/framework/formats/image_frame.h",
+        "//mediapipe/framework/formats/image_frame_opencv.h",
+        "//mediapipe/framework/port/opencv_core_inc.h",
+        "//mediapipe/framework/port/opencv_imgproc_inc.h",
+        "//mediapipe/framework/port/ret_check.h",
+        "//mediapipe/util/color.pb.h",
+        "//absl/strings/str_cat.h",
+        "//mediapipe/framework/deps/file_path.h",
+        "//mediapipe/framework/formats/matrix.h",
+        "//mediapipe/framework/port/opencv_imgcodecs_inc.h",
+        "//mediapipe/framework/port/status.h",
+        "//mediapipe/util/resource_util.h",
+        "//mediapipe/gpu/gl_calculator_helper.h",
+        "//mediapipe/gpu/gl_simple_shaders.h",
+        "//mediapipe/gpu/shader_util.h",
+        ],
+    alwayslink = 1,
+)
