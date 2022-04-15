@@ -19,11 +19,11 @@ load(
 
 licenses(["notice"])
 
-package(default_visibility = ["//visibility:public"])
+package(default_visibility=["//visibility:public"])
 
 cc_library(
-    name = "portrait_segmentation_gpu_deps",
-    deps = [
+    name="portrait_segmentation_gpu_deps",
+    deps=[
         "//mediapipe/calculators/core:flow_limiter_calculator",
         "//mediapipe/calculators/image:background_masking_calculator",
         "//mediapipe/modules/selfie_segmentation:selfie_segmentation_gpu",
@@ -31,8 +31,8 @@ cc_library(
 )
 
 mediapipe_binary_graph(
-    name = "portrait_segmentation_gpu_binary_graph",
-    graph = "portrait_segmentation_gpu.pbtxt",
-    output_name = "portrait_segmentation_gpu.binarypb",
-    deps = [":selfie_segmentation_gpu_deps"],
+    name="portrait_segmentation_gpu_binary_graph",
+    graph="portrait_segmentation_gpu.pbtxt",
+    output_name="portrait_segmentation_gpu.binarypb",
+    deps=[":portrait_segmentation_gpu_deps"],
 )

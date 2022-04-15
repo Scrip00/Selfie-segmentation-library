@@ -14,34 +14,35 @@
 
 licenses(["notice"])
 
-package(default_visibility = ["//visibility:private"])
+package(default_visibility=["//visibility:private"])
 
 cc_binary(
-    name = "libmediapipe_jni.so",
-    linkshared = 1,
-    linkstatic = 1,
-    deps = [
+    name="libmediapipe_jni.so",
+    linkshared=1,
+    linkstatic=1,
+    deps=[
         "//mediapipe/graphs/portrait_segmentation:portrait_segmentation_gpu_deps",
         "//mediapipe/java/com/google/mediapipe/framework/jni:mediapipe_framework_jni",
     ],
 )
 
 cc_library(
-    name = "mediapipe_jni_lib",
-    srcs = [":libmediapipe_jni.so"],
-    alwayslink = 1,
+    name="mediapipe_jni_lib",
+    srcs=[":libmediapipe_jni.so"],
+    alwayslink=1,
 )
 
 android_binary(
-    name = "portraitsegmentationgpu",
-    srcs = glob(["*.java"]),
-    assets = [
+    name="portraitsegmentationgpu",
+    srcs=glob(["*.java"]),
+    assets=[
         "//mediapipe/graphs/portrait_segmentation:portrait_segmentation_gpu.binarypb",
-        "//mediapipe/modules/selfie_segmentation:/selfie_segmentation.tflite",
+        "//mediapipe/modules/selfie_segmentation:selfie_segmentation.tflite",
+        "//mediapipe/calculators/image/testdata:dino.jpg",
     ],
-    assets_dir = "",
-    manifest = "//mediapipe/examples/android/src/java/com/google/mediapipe/apps/basic:AndroidManifest.xml",
-    manifest_values = {
+    assets_dir="",
+    manifest="//mediapipe/examples/android/src/java/com/google/mediapipe/apps/basic:AndroidManifest.xml",
+    manifest_values={
         "applicationId": "com.google.mediapipe.apps.portraitsegmentationgpu",
         "appName": "Portrait Segmentation",
         "mainActivity": "com.google.mediapipe.apps.basic.MainActivity",
@@ -52,8 +53,8 @@ android_binary(
         "flipFramesVertically": "True",
         "converterNumBuffers": "2",
     },
-    multidex = "native",
-    deps = [
+    multidex="native",
+    deps=[
         ":mediapipe_jni_lib",
         "//mediapipe/examples/android/src/java/com/google/mediapipe/apps/basic:basic_lib",
     ],

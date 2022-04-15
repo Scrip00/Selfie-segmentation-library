@@ -94,10 +94,10 @@ namespace mediapipe {
 //
 // Note: Cannot mix-match CPU & GPU inputs/outputs.
 //       CPU-in & CPU-out <or> GPU-in & GPU-out
-class RecolorCalculator : public CalculatorBase {
+class BackgroundMaskingCalculator : public CalculatorBase {
  public:
-  RecolorCalculator() = default;
-  ~RecolorCalculator() override = default;
+  BackgroundMaskingCalculator() = default;
+  ~BackgroundMaskingCalculator() override = default;
 
   static absl::Status GetContract(CalculatorContract* cc);
 
@@ -127,7 +127,7 @@ class RecolorCalculator : public CalculatorBase {
 REGISTER_CALCULATOR(RecolorCalculator);
 
 // static
-absl::Status RecolorCalculator::GetContract(CalculatorContract* cc) {
+absl::Status BackgroundMaskingCalculator::GetContract(CalculatorContract* cc) {
   RET_CHECK(!cc->Inputs().GetTags().empty());
   RET_CHECK(!cc->Outputs().GetTags().empty());
 
@@ -179,7 +179,7 @@ absl::Status RecolorCalculator::GetContract(CalculatorContract* cc) {
   return absl::OkStatus();
 }
 
-absl::Status RecolorCalculator::Open(CalculatorContext* cc) {
+absl::Status BackgroundMaskingCalculator::Open(CalculatorContext* cc) {
   cc->SetOffset(TimestampDiff(0));
 
   if (cc->Inputs().HasTag(kGpuBufferTag)) {
@@ -194,7 +194,7 @@ absl::Status RecolorCalculator::Open(CalculatorContext* cc) {
   return absl::OkStatus();
 }
 
-absl::Status RecolorCalculator::Process(CalculatorContext* cc) {
+absl::Status BackgroundMaskingCalculator::Process(CalculatorContext* cc) {
   if (use_gpu_) {
 #if !MEDIAPIPE_DISABLE_GPU
     MP_RETURN_IF_ERROR(
@@ -213,7 +213,7 @@ absl::Status RecolorCalculator::Process(CalculatorContext* cc) {
   return absl::OkStatus();
 }
 
-absl::Status RecolorCalculator::Close(CalculatorContext* cc) {
+absl::Status BackgroundMaskingCalculator::Close(CalculatorContext* cc) {
 #if !MEDIAPIPE_DISABLE_GPU
   gpu_helper_.RunInGlContext([this] {
     if (program_) glDeleteProgram(program_);
@@ -224,7 +224,7 @@ absl::Status RecolorCalculator::Close(CalculatorContext* cc) {
   return absl::OkStatus();
 }
 
-absl::Status RecolorCalculator::RenderCpu(CalculatorContext* cc) {
+absl::Status BackgroundMaskingCalculator::RenderCpu(CalculatorContext* cc) {
   if (cc->Inputs().Tag(kMaskCpuTag).IsEmpty()) {
     cc->Outputs()
         .Tag(kImageFrameTag)
@@ -297,7 +297,7 @@ absl::Status RecolorCalculator::RenderCpu(CalculatorContext* cc) {
   return absl::OkStatus();
 }
 
-absl::Status RecolorCalculator::RenderGpu(CalculatorContext* cc) {
+absl::Status BackgroundMaskingCalculator::RenderGpu(CalculatorContext* cc) {
   if (cc->Inputs().Tag(kMaskGpuTag).IsEmpty()) {
     cc->Outputs()
         .Tag(kGpuBufferTag)
@@ -348,7 +348,7 @@ absl::Status RecolorCalculator::RenderGpu(CalculatorContext* cc) {
   return absl::OkStatus();
 }
 
-void RecolorCalculator::GlRender() {
+void BackgroundMaskingCalculator::GlRender() {
 #if !MEDIAPIPE_DISABLE_GPU
   static const GLfloat square_vertices[] = {
       -1.0f, -1.0f,  // bottom left
@@ -400,7 +400,7 @@ void RecolorCalculator::GlRender() {
 #endif  // !MEDIAPIPE_DISABLE_GPU
 }
 
-absl::Status RecolorCalculator::LoadOptions(CalculatorContext* cc) {
+absl::Status BackgroundMaskingCalculator::LoadOptions(CalculatorContext* cc) {
   const auto& options = cc->Options<mediapipe::RecolorCalculatorOptions>();
 
   mask_channel_ = options.mask_channel();
@@ -417,7 +417,7 @@ absl::Status RecolorCalculator::LoadOptions(CalculatorContext* cc) {
   return absl::OkStatus();
 }
 
-absl::Status RecolorCalculator::InitGpu(CalculatorContext* cc) {
+absl::Status BackgroundMaskingCalculator::InitGpu(CalculatorContext* cc) {
 #if !MEDIAPIPE_DISABLE_GPU
   const GLint attr_location[NUM_ATTRIBUTES] = {
       ATTRIB_VERTEX,

@@ -1,0 +1,18 @@
+
+(java:44148): Gtk-WARNING **: 22:20:22.034: Theme parsing error: gtk-dark.css:5822:26: '-shadow' is not a valid color name
+
+(java:44148): Gtk-WARNING **: 22:20:22.034: Theme parsing error: gtk-dark.css:5825:14: not a number
+
+(java:44148): Gtk-WARNING **: 22:20:22.034: Theme parsing error: gtk-dark.css:5826:13: not a number
+
+(java:44148): Gtk-WARNING **: 22:20:22.034: Theme parsing error: gtk-dark.css:5827:11: Expected a length
+Gtk-Message: 22:20:22.058: Failed to load module "appmenu-gtk-module"
+
+(java:44148): Gtk-WARNING **: 22:20:24.125: Theme parsing error: gtk.css:5822:26: '-shadow' is not a valid color name
+
+(java:44148): Gtk-WARNING **: 22:20:24.125: Theme parsing error: gtk.css:5825:14: not a number
+
+(java:44148): Gtk-WARNING **: 22:20:24.125: Theme parsing error: gtk.css:5826:13: not a number
+
+(java:44148): Gtk-WARNING **: 22:20:24.125: Theme parsing error: gtk.css:5827:11: Expected a length
+IDE has not been initialized yet

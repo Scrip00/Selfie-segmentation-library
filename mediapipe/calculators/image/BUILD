@@ -16,23 +16,23 @@ load("//mediapipe/framework/port:build_config.bzl", "mediapipe_proto_library")
 
 licenses(["notice"])
 
-package(default_visibility = ["//visibility:private"])
+package(default_visibility=["//visibility:private"])
 
 mediapipe_proto_library(
-    name = "opencv_image_encoder_calculator_proto",
-    srcs = ["opencv_image_encoder_calculator.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="opencv_image_encoder_calculator_proto",
+    srcs=["opencv_image_encoder_calculator.proto"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
     ],
 )
 
 mediapipe_proto_library(
-    name = "scale_image_calculator_proto",
-    srcs = ["scale_image_calculator.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="scale_image_calculator_proto",
+    srcs=["scale_image_calculator.proto"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
         "//mediapipe/framework/formats:image_format_proto",
@@ -40,40 +40,40 @@ mediapipe_proto_library(
 )
 
 mediapipe_proto_library(
-    name = "set_alpha_calculator_proto",
-    srcs = ["set_alpha_calculator.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="set_alpha_calculator_proto",
+    srcs=["set_alpha_calculator.proto"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
     ],
 )
 
 mediapipe_proto_library(
-    name = "image_cropping_calculator_proto",
-    srcs = ["image_cropping_calculator.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="image_cropping_calculator_proto",
+    srcs=["image_cropping_calculator.proto"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
     ],
 )
 
 mediapipe_proto_library(
-    name = "bilateral_filter_calculator_proto",
-    srcs = ["bilateral_filter_calculator.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="bilateral_filter_calculator_proto",
+    srcs=["bilateral_filter_calculator.proto"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
     ],
 )
 
 mediapipe_proto_library(
-    name = "recolor_calculator_proto",
-    srcs = ["recolor_calculator.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="recolor_calculator_proto",
+    srcs=["recolor_calculator.proto"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
         "//mediapipe/util:color_proto",
@@ -81,20 +81,20 @@ mediapipe_proto_library(
 )
 
 mediapipe_proto_library(
-    name = "segmentation_smoothing_calculator_proto",
-    srcs = ["segmentation_smoothing_calculator.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="segmentation_smoothing_calculator_proto",
+    srcs=["segmentation_smoothing_calculator.proto"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
     ],
 )
 
 cc_library(
-    name = "color_convert_calculator",
-    srcs = ["color_convert_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="color_convert_calculator",
+    srcs=["color_convert_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework:timestamp",
         "//mediapipe/framework/formats:image_frame",
@@ -106,14 +106,14 @@ cc_library(
         "//mediapipe/framework/port:source_location",
         "//mediapipe/framework/port:status",
     ],
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_library(
-    name = "opencv_encoded_image_to_image_frame_calculator",
-    srcs = ["opencv_encoded_image_to_image_frame_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="opencv_encoded_image_to_image_frame_calculator",
+    srcs=["opencv_encoded_image_to_image_frame_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         ":opencv_encoded_image_to_image_frame_calculator_cc_proto",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:image_frame_opencv",
@@ -121,14 +121,14 @@ cc_library(
         "//mediapipe/framework/port:opencv_imgproc",
         "//mediapipe/framework/port:status",
     ],
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_library(
-    name = "opencv_image_encoder_calculator",
-    srcs = ["opencv_image_encoder_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="opencv_image_encoder_calculator",
+    srcs=["opencv_image_encoder_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         ":opencv_image_encoder_calculator_cc_proto",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:image_frame_opencv",
@@ -136,28 +136,28 @@ cc_library(
         "//mediapipe/framework/port:opencv_imgproc",
         "//mediapipe/framework/port:status",
     ],
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_library(
-    name = "opencv_put_text_calculator",
-    srcs = ["opencv_put_text_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="opencv_put_text_calculator",
+    srcs=["opencv_put_text_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:image_frame_opencv",
         "//mediapipe/framework/port:opencv_imgcodecs",
         "//mediapipe/framework/port:opencv_imgproc",
         "//mediapipe/framework/port:status",
     ],
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_library(
-    name = "set_alpha_calculator",
-    srcs = ["set_alpha_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="set_alpha_calculator",
+    srcs=["set_alpha_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         ":set_alpha_calculator_cc_proto",
         "//mediapipe/framework:calculator_options_cc_proto",
         "//mediapipe/framework/formats:image_format_cc_proto",
@@ -177,14 +177,14 @@ cc_library(
             "//mediapipe/gpu:shader_util",
         ],
     }),
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_library(
-    name = "bilateral_filter_calculator",
-    srcs = ["bilateral_filter_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="bilateral_filter_calculator",
+    srcs=["bilateral_filter_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         ":bilateral_filter_calculator_cc_proto",
         "//mediapipe/framework:calculator_options_cc_proto",
         "//mediapipe/framework/formats:image_format_cc_proto",
@@ -206,14 +206,14 @@ cc_library(
             "//mediapipe/gpu:shader_util",
         ],
     }),
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 mediapipe_proto_library(
-    name = "image_transformation_calculator_proto",
-    srcs = ["image_transformation_calculator.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="image_transformation_calculator_proto",
+    srcs=["image_transformation_calculator.proto"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
         "//mediapipe/gpu:scale_mode_proto",
@@ -221,23 +221,23 @@ mediapipe_proto_library(
 )
 
 cc_library(
-    name = "image_transformation_calculator",
-    srcs = ["image_transformation_calculator.cc"],
-    copts = select({
+    name="image_transformation_calculator",
+    srcs=["image_transformation_calculator.cc"],
+    copts=select({
         "//mediapipe:apple": [
             "-x objective-c++",
         ],
         "//conditions:default": [],
     }),
-    linkopts = select({
+    linkopts=select({
         "//mediapipe:apple": [
             "-framework CoreVideo",
             "-framework MetalKit",
         ],
         "//conditions:default": [],
     }),
-    visibility = ["//visibility:public"],
-    deps = [
+    visibility=["//visibility:public"],
+    deps=[
         ":image_transformation_calculator_cc_proto",
         "//mediapipe/framework:packet",
         "//mediapipe/framework:timestamp",
@@ -259,28 +259,28 @@ cc_library(
             "//mediapipe/gpu:shader_util",
         ],
     }),
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_library(
-    name = "image_cropping_calculator",
-    srcs = ["image_cropping_calculator.cc"],
-    hdrs = ["image_cropping_calculator.h"],
-    copts = select({
+    name="image_cropping_calculator",
+    srcs=["image_cropping_calculator.cc"],
+    hdrs=["image_cropping_calculator.h"],
+    copts=select({
         "//mediapipe:apple": [
             "-x objective-c++",
         ],
         "//conditions:default": [],
     }),
-    linkopts = select({
+    linkopts=select({
         "//mediapipe:apple": [
             "-framework CoreVideo",
             "-framework MetalKit",
         ],
         "//conditions:default": [],
     }),
-    visibility = ["//visibility:public"],
-    deps = [
+    visibility=["//visibility:public"],
+    deps=[
         ":image_cropping_calculator_cc_proto",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:image_frame",
@@ -300,13 +300,13 @@ cc_library(
             "//mediapipe/gpu:shader_util",
         ],
     }),
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_test(
-    name = "image_cropping_calculator_test",
-    srcs = ["image_cropping_calculator_test.cc"],
-    deps = [
+    name="image_cropping_calculator_test",
+    srcs=["image_cropping_calculator_test.cc"],
+    deps=[
         ":image_cropping_calculator",
         ":image_cropping_calculator_cc_proto",
         "//mediapipe/framework:calculator_framework",
@@ -320,38 +320,38 @@ cc_test(
 )
 
 cc_library(
-    name = "luminance_calculator",
-    srcs = ["luminance_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="luminance_calculator",
+    srcs=["luminance_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework/port:ret_check",
         "//mediapipe/framework/port:status",
         "//mediapipe/gpu:gl_simple_calculator",
         "//mediapipe/gpu:gl_simple_shaders",
         "//mediapipe/gpu:shader_util",
     ],
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_library(
-    name = "sobel_edges_calculator",
-    srcs = ["sobel_edges_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="sobel_edges_calculator",
+    srcs=["sobel_edges_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework/port:ret_check",
         "//mediapipe/framework/port:status",
         "//mediapipe/gpu:gl_simple_calculator",
         "//mediapipe/gpu:gl_simple_shaders",
         "//mediapipe/gpu:shader_util",
     ],
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_library(
-    name = "recolor_calculator",
-    srcs = ["recolor_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="recolor_calculator",
+    srcs=["recolor_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         ":recolor_calculator_cc_proto",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:image_frame",
@@ -370,17 +370,17 @@ cc_library(
             "//mediapipe/gpu:shader_util",
         ],
     }),
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_library(
-    name = "scale_image_utils",
-    srcs = ["scale_image_utils.cc"],
-    hdrs = ["scale_image_utils.h"],
-    visibility = [
+    name="scale_image_utils",
+    srcs=["scale_image_utils.cc"],
+    hdrs=["scale_image_utils.h"],
+    visibility=[
         "//mediapipe:__subpackages__",
     ],
-    deps = [
+    deps=[
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/port:logging",
         "//mediapipe/framework/port:ret_check",
@@ -390,12 +390,12 @@ cc_library(
 )
 
 cc_library(
-    name = "scale_image_calculator",
-    srcs = ["scale_image_calculator.cc"],
-    visibility = [
+    name="scale_image_calculator",
+    srcs=["scale_image_calculator.cc"],
+    visibility=[
         "//visibility:public",
     ],
-    deps = [
+    deps=[
         ":scale_image_utils",
         "//mediapipe/calculators/image:scale_image_calculator_cc_proto",
         "//mediapipe/framework:calculator_framework",
@@ -415,24 +415,24 @@ cc_library(
         "@com_google_absl//absl/strings",
         "@libyuv",
     ],
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 mediapipe_proto_library(
-    name = "image_clone_calculator_proto",
-    srcs = ["image_clone_calculator.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="image_clone_calculator_proto",
+    srcs=["image_clone_calculator.proto"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
     ],
 )
 
 cc_library(
-    name = "image_clone_calculator",
-    srcs = ["image_clone_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="image_clone_calculator",
+    srcs=["image_clone_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         ":image_clone_calculator_cc_proto",
         "//mediapipe/framework/api2:node",
         "//mediapipe/framework:calculator_framework",
@@ -445,14 +445,14 @@ cc_library(
             "//mediapipe/gpu:gl_calculator_helper",
         ],
     }),
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_library(
-    name = "image_properties_calculator",
-    srcs = ["image_properties_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="image_properties_calculator",
+    srcs=["image_properties_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework/api2:node",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:image",
@@ -465,14 +465,14 @@ cc_library(
             "//mediapipe/gpu:gpu_buffer",
         ],
     }),
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_test(
-    name = "opencv_encoded_image_to_image_frame_calculator_test",
-    srcs = ["opencv_encoded_image_to_image_frame_calculator_test.cc"],
-    data = ["//mediapipe/calculators/image/testdata:test_images"],
-    deps = [
+    name="opencv_encoded_image_to_image_frame_calculator_test",
+    srcs=["opencv_encoded_image_to_image_frame_calculator_test.cc"],
+    data=["//mediapipe/calculators/image/testdata:test_images"],
+    deps=[
         ":opencv_encoded_image_to_image_frame_calculator",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework:calculator_runner",
@@ -487,10 +487,10 @@ cc_test(
 )
 
 cc_test(
-    name = "opencv_image_encoder_calculator_test",
-    srcs = ["opencv_image_encoder_calculator_test.cc"],
-    data = ["//mediapipe/calculators/image/testdata:test_images"],
-    deps = [
+    name="opencv_image_encoder_calculator_test",
+    srcs=["opencv_image_encoder_calculator_test.cc"],
+    data=["//mediapipe/calculators/image/testdata:test_images"],
+    deps=[
         ":opencv_image_encoder_calculator",
         ":opencv_image_encoder_calculator_cc_proto",
         "//mediapipe/framework:calculator_framework",
@@ -505,49 +505,49 @@ cc_test(
 )
 
 cc_test(
-    name = "scale_image_utils_test",
-    srcs = ["scale_image_utils_test.cc"],
-    deps = [
+    name="scale_image_utils_test",
+    srcs=["scale_image_utils_test.cc"],
+    deps=[
         ":scale_image_utils",
         "//mediapipe/framework/port:gtest_main",
     ],
 )
 
 mediapipe_proto_library(
-    name = "mask_overlay_calculator_proto",
-    srcs = ["mask_overlay_calculator.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="mask_overlay_calculator_proto",
+    srcs=["mask_overlay_calculator.proto"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
     ],
 )
 
 mediapipe_proto_library(
-    name = "opencv_encoded_image_to_image_frame_calculator_proto",
-    srcs = ["opencv_encoded_image_to_image_frame_calculator.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="opencv_encoded_image_to_image_frame_calculator_proto",
+    srcs=["opencv_encoded_image_to_image_frame_calculator.proto"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
     ],
 )
 
 mediapipe_proto_library(
-    name = "feature_detector_calculator_proto",
-    srcs = ["feature_detector_calculator.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="feature_detector_calculator_proto",
+    srcs=["feature_detector_calculator.proto"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
     ],
 )
 
 cc_library(
-    name = "mask_overlay_calculator",
-    srcs = ["mask_overlay_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="mask_overlay_calculator",
+    srcs=["mask_overlay_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         ":mask_overlay_calculator_cc_proto",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/port:ret_check",
@@ -556,14 +556,14 @@ cc_library(
         "//mediapipe/gpu:gl_simple_shaders",
         "//mediapipe/gpu:shader_util",
     ],
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_library(
-    name = "feature_detector_calculator",
-    srcs = ["feature_detector_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="feature_detector_calculator",
+    srcs=["feature_detector_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         ":feature_detector_calculator_cc_proto",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:image_frame",
@@ -583,28 +583,28 @@ cc_library(
         "@com_google_absl//absl/synchronization",
         "@org_tensorflow//tensorflow/lite:framework",
     ],
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_library(
-    name = "image_file_properties_calculator",
-    srcs = ["image_file_properties_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="image_file_properties_calculator",
+    srcs=["image_file_properties_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:image_file_properties_cc_proto",
         "//mediapipe/framework/port:ret_check",
         "//mediapipe/framework/port:status",
         "@easyexif",
     ],
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_test(
-    name = "image_file_properties_calculator_test",
-    srcs = ["image_file_properties_calculator_test.cc"],
-    data = ["//mediapipe/calculators/image/testdata:test_images"],
-    deps = [
+    name="image_file_properties_calculator_test",
+    srcs=["image_file_properties_calculator_test.cc"],
+    data=["//mediapipe/calculators/image/testdata:test_images"],
+    deps=[
         ":image_file_properties_calculator",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework:calculator_runner",
@@ -617,10 +617,10 @@ cc_test(
 )
 
 cc_library(
-    name = "segmentation_smoothing_calculator",
-    srcs = ["segmentation_smoothing_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="segmentation_smoothing_calculator",
+    srcs=["segmentation_smoothing_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
         ":segmentation_smoothing_calculator_cc_proto",
         "//mediapipe/framework:calculator_options_cc_proto",
         "//mediapipe/framework/formats:image_format_cc_proto",
@@ -642,13 +642,13 @@ cc_library(
             "//mediapipe/gpu:shader_util",
         ],
     }),
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_test(
-    name = "segmentation_smoothing_calculator_test",
-    srcs = ["segmentation_smoothing_calculator_test.cc"],
-    deps = [
+    name="segmentation_smoothing_calculator_test",
+    srcs=["segmentation_smoothing_calculator_test.cc"],
+    deps=[
         ":image_clone_calculator",
         ":image_clone_calculator_cc_proto",
         ":segmentation_smoothing_calculator",
@@ -666,16 +666,16 @@ cc_test(
 )
 
 cc_library(
-    name = "affine_transformation",
-    hdrs = ["affine_transformation.h"],
-    deps = ["@com_google_absl//absl/status:statusor"],
+    name="affine_transformation",
+    hdrs=["affine_transformation.h"],
+    deps=["@com_google_absl//absl/status:statusor"],
 )
 
 cc_library(
-    name = "affine_transformation_runner_gl",
-    srcs = ["affine_transformation_runner_gl.cc"],
-    hdrs = ["affine_transformation_runner_gl.h"],
-    deps = [
+    name="affine_transformation_runner_gl",
+    srcs=["affine_transformation_runner_gl.cc"],
+    hdrs=["affine_transformation_runner_gl.h"],
+    deps=[
         ":affine_transformation",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/port:ret_check",
@@ -692,10 +692,10 @@ cc_library(
 )
 
 cc_library(
-    name = "affine_transformation_runner_opencv",
-    srcs = ["affine_transformation_runner_opencv.cc"],
-    hdrs = ["affine_transformation_runner_opencv.h"],
-    deps = [
+    name="affine_transformation_runner_opencv",
+    srcs=["affine_transformation_runner_opencv.cc"],
+    hdrs=["affine_transformation_runner_opencv.h"],
+    deps=[
         ":affine_transformation",
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:image_frame",
@@ -710,10 +710,10 @@ cc_library(
 )
 
 mediapipe_proto_library(
-    name = "warp_affine_calculator_proto",
-    srcs = ["warp_affine_calculator.proto"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="warp_affine_calculator_proto",
+    srcs=["warp_affine_calculator.proto"],
+    visibility=["//visibility:public"],
+    deps=[
         "//mediapipe/framework:calculator_options_proto",
         "//mediapipe/framework:calculator_proto",
         "//mediapipe/gpu:gpu_origin_proto",
@@ -721,11 +721,11 @@ mediapipe_proto_library(
 )
 
 cc_library(
-    name = "warp_affine_calculator",
-    srcs = ["warp_affine_calculator.cc"],
-    hdrs = ["warp_affine_calculator.h"],
-    visibility = ["//visibility:public"],
-    deps = [
+    name="warp_affine_calculator",
+    srcs=["warp_affine_calculator.cc"],
+    hdrs=["warp_affine_calculator.h"],
+    visibility=["//visibility:public"],
+    deps=[
         ":affine_transformation",
         ":affine_transformation_runner_opencv",
         ":warp_affine_calculator_cc_proto",
@@ -746,13 +746,13 @@ cc_library(
             ":affine_transformation_runner_gl",
         ],
     }),
-    alwayslink = 1,
+    alwayslink=1,
 )
 
 cc_test(
-    name = "warp_affine_calculator_test",
-    srcs = ["warp_affine_calculator_test.cc"],
-    data = [
+    name="warp_affine_calculator_test",
+    srcs=["warp_affine_calculator_test.cc"],
+    data=[
         "//mediapipe/calculators/tensor:testdata/image_to_tensor/input.jpg",
         "//mediapipe/calculators/tensor:testdata/image_to_tensor/large_sub_rect.png",
         "//mediapipe/calculators/tensor:testdata/image_to_tensor/large_sub_rect_border_zero.png",
@@ -768,8 +768,8 @@ cc_test(
         "//mediapipe/calculators/tensor:testdata/image_to_tensor/medium_sub_rect_with_rotation_border_zero.png",
         "//mediapipe/calculators/tensor:testdata/image_to_tensor/noop_except_range.png",
     ],
-    tags = ["desktop_only_test"],
-    deps = [
+    tags=["desktop_only_test"],
+    deps=[
         ":affine_transformation",
         ":warp_affine_calculator",
         "//mediapipe/calculators/image:image_transformation_calculator",
@@ -801,26 +801,32 @@ cc_test(
 )
 
 cc_library(
-    name = "background_masking_calculator",
-    srcs = ["background_masking_calculator.cc"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//mediapipe/framework/calculator_framework.h",
-        "//mediapipe/framework/formats/image_frame.h",
-        "//mediapipe/framework/formats/image_frame_opencv.h",
-        "//mediapipe/framework/port/opencv_core_inc.h",
-        "//mediapipe/framework/port/opencv_imgproc_inc.h",
-        "//mediapipe/framework/port/ret_check.h",
-        "//mediapipe/util/color.pb.h",
-        "//absl/strings/str_cat.h",
-        "//mediapipe/framework/deps/file_path.h",
-        "//mediapipe/framework/formats/matrix.h",
-        "//mediapipe/framework/port/opencv_imgcodecs_inc.h",
-        "//mediapipe/framework/port/status.h",
-        "//mediapipe/util/resource_util.h",
-        "//mediapipe/gpu/gl_calculator_helper.h",
-        "//mediapipe/gpu/gl_simple_shaders.h",
-        "//mediapipe/gpu/shader_util.h",
-        ],
-    alwayslink = 1,
+    name="background_masking_calculator",
+    srcs=["background_masking_calculator.cc"],
+    visibility=["//visibility:public"],
+    deps=[
+        ":recolor_calculator_cc_proto",
+        "//mediapipe/gpu:gl_calculator_helper",
+        "//mediapipe/util:color_cc_proto",
+        "//mediapipe/framework:calculator_framework",
+        "//mediapipe/framework:calculator_options_cc_proto",
+        "//mediapipe/framework:timestamp",
+        "//mediapipe/framework/port:status",
+        "//mediapipe/framework/deps:file_path",
+        "@com_google_absl//absl/time",
+        "@com_google_absl//absl/strings",
+        "//mediapipe/framework/formats:rect_cc_proto",
+        "//mediapipe/framework/port:ret_check",
+        "//mediapipe/framework/formats:image_frame",
+        "//mediapipe/framework/formats:matrix",
+        "//mediapipe/framework/formats:image_frame_opencv",
+        "//mediapipe/framework/port:opencv_core",
+        "//mediapipe/framework/port:opencv_imgproc",
+        "//mediapipe/framework/port:opencv_imgcodecs",
+        "//mediapipe/util:resource_util",
+        "//mediapipe/gpu:gl_simple_shaders",
+        "//mediapipe/gpu:gl_quad_renderer",
+        "//mediapipe/gpu:shader_util",
+    ],
+    alwayslink=1,
 )
