@@ -73,10 +73,6 @@ absl::Status BackgroundMaskingCalculator::Open(CalculatorContext *cc) {
 }
 
 absl::Status BackgroundMaskingCalculator::Process(CalculatorContext *cc) {
-  if (cc->Inputs().Tag("IMG_PATH").IsEmpty()){
-        return ::mediapipe::OkStatus();
-    }
-
   MP_RETURN_IF_ERROR(gpu_helper_.RunInGlContext([this, &cc]() -> absl::Status {
     if (!initialized_) {
       MP_RETURN_IF_ERROR(InitGpu(cc));
@@ -224,16 +220,15 @@ absl::Status BackgroundMaskingCalculator::InitGpu(CalculatorContext *cc) {
   mediapipe::StatusOr<std::string> status =
       ::mediapipe::PathToResourceAsFile("dino.jpg");
 
-  if (status.ok()) { // cc->Inputs().Tag("IMG_PATH").IsEmpty() &&
+  const Packet &path_packet = cc->Inputs().Tag("IMG_PATH").Value();
+  const std::string &input_path = path_packet.Get<std::string>();
+
+  if (input_path == "Default" && status.ok()) {
     background = cv::imread(status.value(), 1);
   } else {
-    // if (cc->Inputs().Tag("IMG_PATH").IsEmpty()) {
-    //   return absl::OkStatus();
-    // // }
-    // const Packet &path_packet = cc->Inputs().Tag("IMG_PATH").Value();
-    // const std::string &input_path = path_packet.Get<std::string>();
-    // background = cv::imread(input_path, 1);
-    background = cv::imread(status.value(), 1);
+    mediapipe::StatusOr<std::string> statusO =
+        ::mediapipe::PathToResourceAsFile(input_path);
+    background = cv::imread(statusO.value(), 1);
   }
 
   const GLint attr_location[NUM_ATTRIBUTES] = {

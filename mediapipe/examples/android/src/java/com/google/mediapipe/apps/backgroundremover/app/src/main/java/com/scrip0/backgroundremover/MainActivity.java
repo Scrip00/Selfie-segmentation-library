@@ -3,6 +3,7 @@ package com.scrip0.backgroundremover;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -21,8 +22,14 @@ public class MainActivity extends AppCompatActivity {
         viewGroup = findViewById(R.id.preview_display_layout);
 
         BackActivity activity = new BackActivity(this, viewGroup);
-        String path = "file:///android_asset/dino.jpg";
+        String path = "img.png";
         Log.d("PATH", path);
-//        activity.setImage(path);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                activity.setImage(path);
+            }
+        }, 3000);
+
     }
 }

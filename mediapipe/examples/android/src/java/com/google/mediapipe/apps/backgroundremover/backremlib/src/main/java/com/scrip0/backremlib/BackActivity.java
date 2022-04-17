@@ -94,11 +94,10 @@ public class BackActivity {
         processor.getVideoSurfaceOutput().setFlipY(FLIP_FRAMES_VERTICALLY);
 
         processor.setOnWillAddFrameListener(timestamp -> {
-            Packet imgNamePacket = processor.getPacketCreator().createString("LOL");
+            Packet imgNamePacket = processor.getPacketCreator().createString("Default");
             processor.getGraph().addConsumablePacketToInputStream("img_path", imgNamePacket, timestamp);
             imgNamePacket.release();
         });
-
 
         converter = new ExternalTextureConverter(eglManager.getContext(), 2);
         converter.setFlipY(FLIP_FRAMES_VERTICALLY);
@@ -122,7 +121,6 @@ public class BackActivity {
                             @Override
                             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
                                 onPreviewDisplaySurfaceChanged(holder, format, width, height);
-//                                setImage("file:///android_asset/dino.jpg");
                             }
 
                             @Override
@@ -132,12 +130,30 @@ public class BackActivity {
                         });
     }
 
+
+
     public void setImage(String path) {
+        converter.close();
+        previewDisplayView.setVisibility(View.GONE);
+        processor =
+                new FrameProcessor(
+                        context,
+                        eglManager.getNativeContext(),
+                        BINARY_GRAPH_NAME,
+                        INPUT_VIDEO_STREAM_NAME,
+                        OUTPUT_VIDEO_STREAM_NAME);
+        processor.getVideoSurfaceOutput().setFlipY(FLIP_FRAMES_VERTICALLY);
         processor.setOnWillAddFrameListener(timestamp -> {
             Packet imgNamePacket = processor.getPacketCreator().createString(path);
             processor.getGraph().addConsumablePacketToInputStream("img_path", imgNamePacket, timestamp);
             imgNamePacket.release();
         });
+
+        converter = new ExternalTextureConverter(eglManager.getContext(), 2);
+        converter.setFlipY(FLIP_FRAMES_VERTICALLY);
+        converter.setConsumer(processor);
+
+        startCamera();
     }
 
     protected void onPreviewDisplaySurfaceChanged(
