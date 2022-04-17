@@ -12,7 +12,8 @@ import com.scrip0.backremlib.BackActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    ViewGroup viewGroup;
+    private ViewGroup viewGroup;
+    private BackActivity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
         viewGroup = findViewById(R.id.preview_display_layout);
 
-        BackActivity activity = new BackActivity(this, viewGroup);
+        activity = new BackActivity(this, viewGroup);
         String path = "img.png";
         Log.d("PATH", path);
         Handler handler = new Handler();
@@ -29,7 +30,19 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 activity.setImage(path);
             }
-        }, 3000);
+        }, 10000);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        activity.resume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        activity.pause();
     }
 }

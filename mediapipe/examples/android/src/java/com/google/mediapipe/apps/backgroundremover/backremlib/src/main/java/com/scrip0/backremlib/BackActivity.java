@@ -98,12 +98,6 @@ public class BackActivity {
             processor.getGraph().addConsumablePacketToInputStream("img_path", imgNamePacket, timestamp);
             imgNamePacket.release();
         });
-
-        converter = new ExternalTextureConverter(eglManager.getContext(), 2);
-        converter.setFlipY(FLIP_FRAMES_VERTICALLY);
-        converter.setConsumer(processor);
-
-        startCamera();
     }
 
     private void setupPreviewDisplayView() {
@@ -130,7 +124,18 @@ public class BackActivity {
                         });
     }
 
+    public void pause(){
+        converter.close();
+        // Hide preview display until we re-open the camera again.
+        previewDisplayView.setVisibility(View.GONE);
+    }
 
+    public void resume(){
+        converter = new ExternalTextureConverter(eglManager.getContext(), 2);
+        converter.setFlipY(FLIP_FRAMES_VERTICALLY);
+        converter.setConsumer(processor);
+        startCamera();
+    }
 
     public void setImage(String path) {
         converter.close();
@@ -152,7 +157,6 @@ public class BackActivity {
         converter = new ExternalTextureConverter(eglManager.getContext(), 2);
         converter.setFlipY(FLIP_FRAMES_VERTICALLY);
         converter.setConsumer(processor);
-
         startCamera();
     }
 
