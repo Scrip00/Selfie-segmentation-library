@@ -56,6 +56,7 @@ absl::Status BackgroundMaskingCalculator::GetContract(CalculatorContract *cc) {
 
   cc->Inputs().Tag("IMAGE_GPU").Set<mediapipe::GpuBuffer>();
   cc->Inputs().Tag("MASK_GPU").Set<mediapipe::GpuBuffer>();
+  cc->Inputs().Tag("IMG_PATH").Set<std::string>();
   cc->Outputs().Tag("IMAGE_GPU").Set<mediapipe::GpuBuffer>();
   MP_RETURN_IF_ERROR(mediapipe::GlCalculatorHelper::UpdateContract(cc));
   return absl::OkStatus();
@@ -72,6 +73,9 @@ absl::Status BackgroundMaskingCalculator::Open(CalculatorContext *cc) {
 }
 
 absl::Status BackgroundMaskingCalculator::Process(CalculatorContext *cc) {
+  if (cc->Inputs().Tag("IMG_PATH").IsEmpty()){
+        return ::mediapipe::OkStatus();
+    }
 
   MP_RETURN_IF_ERROR(gpu_helper_.RunInGlContext([this, &cc]() -> absl::Status {
     if (!initialized_) {
@@ -96,7 +100,6 @@ absl::Status BackgroundMaskingCalculator::RenderGpu(CalculatorContext *cc) {
         .Tag(kGpuBufferTag)
         .AddPacket(cc->Inputs().Tag(kGpuBufferTag).Value());
     return absl::OkStatus();
-    ;
   }
 
   // Get inputs and setup output.
@@ -220,7 +223,16 @@ absl::Status BackgroundMaskingCalculator::InitGpu(CalculatorContext *cc) {
 
   mediapipe::StatusOr<std::string> status =
       ::mediapipe::PathToResourceAsFile("dino.jpg");
-  if (status.ok()) {
+
+  if (status.ok()) { // cc->Inputs().Tag("IMG_PATH").IsEmpty() &&
+    background = cv::imread(status.value(), 1);
+  } else {
+    // if (cc->Inputs().Tag("IMG_PATH").IsEmpty()) {
+    //   return absl::OkStatus();
+    // // }
+    // const Packet &path_packet = cc->Inputs().Tag("IMG_PATH").Value();
+    // const std::string &input_path = path_packet.Get<std::string>();
+    // background = cv::imread(input_path, 1);
     background = cv::imread(status.value(), 1);
   }
 

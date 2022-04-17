@@ -3,6 +3,8 @@
 # GPU buffer. (GpuBuffer)
 input_stream: "input_video"
 
+input_stream: "img_path"
+
 # Output image with rendered results. (GpuBuffer)
 output_stream: "output_video"
 
@@ -40,5 +42,6 @@ node {
   calculator: "BackgroundMaskingCalculator"
   input_stream: "IMAGE_GPU:throttled_input_video"
   input_stream: "MASK_GPU:segmentation_mask"
+  input_stream: "IMG_PATH:img_path"
   output_stream: "IMAGE_GPU:output_video"
 }

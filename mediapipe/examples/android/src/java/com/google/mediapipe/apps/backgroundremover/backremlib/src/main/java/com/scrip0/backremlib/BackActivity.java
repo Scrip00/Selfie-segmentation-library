@@ -16,6 +16,7 @@ package com.scrip0.backremlib;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.util.Log;
 import android.util.Size;
@@ -29,6 +30,7 @@ import com.google.mediapipe.components.CameraXPreviewHelper;
 import com.google.mediapipe.components.ExternalTextureConverter;
 import com.google.mediapipe.components.FrameProcessor;
 import com.google.mediapipe.framework.AndroidAssetUtil;
+import com.google.mediapipe.framework.Packet;
 import com.google.mediapipe.glutil.EglManager;
 
 /** Main activity of MediaPipe example apps. */
@@ -91,9 +93,17 @@ public class BackActivity {
                         OUTPUT_VIDEO_STREAM_NAME);
         processor.getVideoSurfaceOutput().setFlipY(FLIP_FRAMES_VERTICALLY);
 
+        processor.setOnWillAddFrameListener(timestamp -> {
+            Packet imgNamePacket = processor.getPacketCreator().createString("LOL");
+            processor.getGraph().addConsumablePacketToInputStream("img_path", imgNamePacket, timestamp);
+            imgNamePacket.release();
+        });
+
+
         converter = new ExternalTextureConverter(eglManager.getContext(), 2);
         converter.setFlipY(FLIP_FRAMES_VERTICALLY);
         converter.setConsumer(processor);
+
         startCamera();
     }
 
@@ -112,6 +122,7 @@ public class BackActivity {
                             @Override
                             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
                                 onPreviewDisplaySurfaceChanged(holder, format, width, height);
+//                                setImage("file:///android_asset/dino.jpg");
                             }
 
                             @Override
@@ -119,6 +130,14 @@ public class BackActivity {
                                 processor.getVideoSurfaceOutput().setSurface(null);
                             }
                         });
+    }
+
+    public void setImage(String path) {
+        processor.setOnWillAddFrameListener(timestamp -> {
+            Packet imgNamePacket = processor.getPacketCreator().createString(path);
+            processor.getGraph().addConsumablePacketToInputStream("img_path", imgNamePacket, timestamp);
+            imgNamePacket.release();
+        });
     }
 
     protected void onPreviewDisplaySurfaceChanged(

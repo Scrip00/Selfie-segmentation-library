@@ -2,4 +2,4 @@
 `FlowLimiterCalculatorinput_videoFINISHED:output_video"throttled_input_videoj
 FINISHED
 YSelfieSegmentationGpuIMAGE:throttled_input_video"#SEGMENTATION_MASK:segmentation_mask
-rBackgroundMaskingCalculatorIMAGE_GPU:throttled_input_videoMASK_GPU:segmentation_mask"IMAGE_GPU:output_videoRinput_videozoutput_video
+…BackgroundMaskingCalculatorIMAGE_GPU:throttled_input_videoMASK_GPU:segmentation_maskIMG_PATH:img_path"IMAGE_GPU:output_videoRinput_videoRimg_pathzoutput_video

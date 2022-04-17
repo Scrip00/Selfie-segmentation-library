@@ -21,5 +21,8 @@ public class MainActivity extends AppCompatActivity {
         viewGroup = findViewById(R.id.preview_display_layout);
 
         BackActivity activity = new BackActivity(this, viewGroup);
+        String path = "file:///android_asset/dino.jpg";
+        Log.d("PATH", path);
+//        activity.setImage(path);
     }
 }
