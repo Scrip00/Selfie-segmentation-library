@@ -2,6 +2,8 @@ package com.scrip0.backgroundremover;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -9,6 +11,9 @@ import android.util.Log;
 import android.view.ViewGroup;
 
 import com.scrip0.backremlib.BackActivity;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,14 +28,21 @@ public class MainActivity extends AppCompatActivity {
         viewGroup = findViewById(R.id.preview_display_layout);
 
         activity = new BackActivity(this, viewGroup);
-        String path = "img.png";
-        Log.d("PATH", path);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                activity.setImage(path);
-            }
-        }, 10000);
+        Bitmap background = null;
+        try {
+            InputStream ims = getAssets().open("img.png");
+            background = BitmapFactory.decodeStream(ims);
+            Handler handler = new Handler();
+            Bitmap finalBackground = background;
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    activity.setImage(finalBackground);
+                    Log.d("SETTT", "SET");
+                }
+            }, 3000);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 

@@ -17,8 +17,8 @@ package com.scrip0.backremlib;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
-import android.util.Log;
 import android.util.Size;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -28,10 +28,12 @@ import android.view.ViewGroup;
 import com.google.mediapipe.components.CameraHelper;
 import com.google.mediapipe.components.CameraXPreviewHelper;
 import com.google.mediapipe.components.ExternalTextureConverter;
-import com.google.mediapipe.components.FrameProcessor;
 import com.google.mediapipe.framework.AndroidAssetUtil;
 import com.google.mediapipe.framework.Packet;
 import com.google.mediapipe.glutil.EglManager;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /** Main activity of MediaPipe example apps. */
 public class BackActivity {
@@ -39,6 +41,7 @@ public class BackActivity {
     private Context context;
 
     private ViewGroup viewGroup;
+
 
     private static final String BINARY_GRAPH_NAME = "portrait_segmentation_gpu.binarypb";
     private static final String INPUT_VIDEO_STREAM_NAME = "input_video";
@@ -66,7 +69,7 @@ public class BackActivity {
     private EglManager eglManager;
     // Sends camera-preview frames into a MediaPipe graph for processing, and displays the processed
     // frames onto a {@link Surface}.
-    private FrameProcessor processor;
+    private BackgroundFrameProcessor processor;
     // Converts the GL_TEXTURE_EXTERNAL_OES texture from Android camera into a regular texture to be
     // consumed by {@link FrameProcessor} and the underlying MediaPipe graph.
     private ExternalTextureConverter converter;
@@ -85,19 +88,29 @@ public class BackActivity {
 
         eglManager = new EglManager(null);
         processor =
-                new FrameProcessor(
+                new BackgroundFrameProcessor(
                         context,
                         eglManager.getNativeContext(),
                         BINARY_GRAPH_NAME,
                         INPUT_VIDEO_STREAM_NAME,
+                        "img_path",
                         OUTPUT_VIDEO_STREAM_NAME);
         processor.getVideoSurfaceOutput().setFlipY(FLIP_FRAMES_VERTICALLY);
+        Bitmap background = null;
+        try {
+            InputStream ims = context.getAssets().open("dino.jpg");
+            background = BitmapFactory.decodeStream(ims);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        processor.setOnWillAddFrameListener(timestamp -> {
-            Packet imgNamePacket = processor.getPacketCreator().createString("Default");
-            processor.getGraph().addConsumablePacketToInputStream("img_path", imgNamePacket, timestamp);
-            imgNamePacket.release();
-        });
+        processor.setImageBackground(background);
+
+//        processor.setOnWillAddFrameListener(timestamp -> {
+//            Packet imgNamePacket = processor.getPacketCreator().createString(this.path);
+//            processor.getGraph().addConsumablePacketToInputStream("img_path", imgNamePacket, timestamp);
+//            imgNamePacket.release();
+//        });
     }
 
     private void setupPreviewDisplayView() {
@@ -137,27 +150,8 @@ public class BackActivity {
         startCamera();
     }
 
-    public void setImage(String path) {
-        converter.close();
-        previewDisplayView.setVisibility(View.GONE);
-        processor =
-                new FrameProcessor(
-                        context,
-                        eglManager.getNativeContext(),
-                        BINARY_GRAPH_NAME,
-                        INPUT_VIDEO_STREAM_NAME,
-                        OUTPUT_VIDEO_STREAM_NAME);
-        processor.getVideoSurfaceOutput().setFlipY(FLIP_FRAMES_VERTICALLY);
-        processor.setOnWillAddFrameListener(timestamp -> {
-            Packet imgNamePacket = processor.getPacketCreator().createString(path);
-            processor.getGraph().addConsumablePacketToInputStream("img_path", imgNamePacket, timestamp);
-            imgNamePacket.release();
-        });
-
-        converter = new ExternalTextureConverter(eglManager.getContext(), 2);
-        converter.setFlipY(FLIP_FRAMES_VERTICALLY);
-        converter.setConsumer(processor);
-        startCamera();
+    public void setImage(Bitmap background) {
+        processor.setImageBackground(background);
     }
 
     protected void onPreviewDisplaySurfaceChanged(

@@ -56,7 +56,7 @@ absl::Status BackgroundMaskingCalculator::GetContract(CalculatorContract *cc) {
 
   cc->Inputs().Tag("IMAGE_GPU").Set<mediapipe::GpuBuffer>();
   cc->Inputs().Tag("MASK_GPU").Set<mediapipe::GpuBuffer>();
-  cc->Inputs().Tag("IMG_PATH").Set<std::string>();
+  cc->Inputs().Tag("IMG_PATH").Set<mediapipe::ImageFrame>();
   cc->Outputs().Tag("IMAGE_GPU").Set<mediapipe::GpuBuffer>();
   MP_RETURN_IF_ERROR(mediapipe::GlCalculatorHelper::UpdateContract(cc));
   return absl::OkStatus();
@@ -105,15 +105,19 @@ absl::Status BackgroundMaskingCalculator::RenderGpu(CalculatorContext *cc) {
   const auto &input_buffer = input_packet.Get<mediapipe::GpuBuffer>();
   const auto &mask_buffer = mask_packet.Get<mediapipe::GpuBuffer>();
 
-  auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
-      mediapipe::ImageFormat::SRGB, background.cols, background.rows,
-      mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
-  cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
-  background.copyTo(input_frame_mat);
+  // auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
+  //     mediapipe::ImageFormat::SRGB, background.cols, background.rows,
+  //     mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
+  // cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
+  // background.copyTo(input_frame_mat);
+
+  const Packet &path_packet = cc->Inputs().Tag("IMG_PATH").Value();
+  const mediapipe::ImageFrame &input_path = path_packet.Get<mediapipe::ImageFrame>();
+  // background = mediapipe::formats::MatView(&input_path);
 
   auto img_tex = gpu_helper_.CreateSourceTexture(input_buffer);
   auto mask_tex = gpu_helper_.CreateSourceTexture(mask_buffer);
-  auto back_tex = gpu_helper_.CreateSourceTexture(*input_frame.get());
+  auto back_tex = gpu_helper_.CreateSourceTexture(input_path);
   auto dst_tex =
       gpu_helper_.CreateDestinationTexture(img_tex.width(), img_tex.height());
 
@@ -217,19 +221,23 @@ absl::Status BackgroundMaskingCalculator::Close(CalculatorContext *cc) {
 
 absl::Status BackgroundMaskingCalculator::InitGpu(CalculatorContext *cc) {
 
-  mediapipe::StatusOr<std::string> status =
-      ::mediapipe::PathToResourceAsFile("dino.jpg");
+  // mediapipe::StatusOr<std::string> status =
+  //     ::mediapipe::PathToResourceAsFile("dino.jpg");
 
-  const Packet &path_packet = cc->Inputs().Tag("IMG_PATH").Value();
-  const std::string &input_path = path_packet.Get<std::string>();
+  // const Packet &path_packet = cc->Inputs().Tag("IMG_PATH").Value();
+  // const mediapipe::ImageFrame &input_path = path_packet.Get<mediapipe::ImageFrame>();
+  // background = mediapipe::formats::MatView(&input_path);
 
-  if (input_path == "Default" && status.ok()) {
-    background = cv::imread(status.value(), 1);
-  } else {
-    mediapipe::StatusOr<std::string> statusO =
-        ::mediapipe::PathToResourceAsFile(input_path);
-    background = cv::imread(statusO.value(), 1);
-  }
+  // if (input_path == "Default" && status.ok()) {
+  //   background = cv::imread(status.value(), 1);
+  // } else {
+  //   cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
+  //   background.copyTo(input_frame_mat);
+
+  //   mediapipe::StatusOr<std::string> statusO =
+  //       ::mediapipe::PathToResourceAsFile(input_path);
+  //   background = cv::imread(statusO.value(), 1);
+  // }
 
   const GLint attr_location[NUM_ATTRIBUTES] = {
       ATTRIB_VERTEX,
