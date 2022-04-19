@@ -49,10 +49,9 @@ import java.util.TimerTask;
 public class BackActivity {
 
     private Context context;
-
     private ViewGroup viewGroup;
-
     private int frame, maxFrame;
+    private Bitmap[] videoFrames;
 
 
     private static final String BINARY_GRAPH_NAME = "portrait_segmentation_gpu.binarypb";
@@ -164,25 +163,29 @@ public class BackActivity {
     public void setVideo(String path) {
         MediaMetadataRetriever mret = new MediaMetadataRetriever();
         mret.setDataSource(path);
-        setImage(ARGBBitmap(mret.getFrameAtIndex(15)));
 
         maxFrame = Integer.parseInt(mret.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT));
+        videoFrames = new Bitmap[maxFrame];
+        for (int i = 0; i < maxFrame; i++) {
+            videoFrames[i] = ARGBBitmap(mret.getFrameAtIndex(i));
+        }
         int fps = Integer.parseInt(mret.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) / maxFrame;
+        mret.close();
 
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                setVideoFrame(mret);
+                setVideoFrame();
             }
         }, 0, fps);
 
     }
 
     @SuppressLint("NewApi")
-    private void setVideoFrame(MediaMetadataRetriever mret) {
+    private void setVideoFrame() {
         if (frame > maxFrame - 1) frame = 0;
-        setImage(mret.getFrameAtIndex(frame));
+        setImage(videoFrames[frame]);
         frame++;
     }
 
