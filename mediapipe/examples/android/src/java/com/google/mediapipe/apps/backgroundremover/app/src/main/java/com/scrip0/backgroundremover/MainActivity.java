@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         img = findViewById(R.id.imgg);
         activity = new BackActivity(this, viewGroup);
 
-        activity.setVideo(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/giphy.gif");
+        activity.setVideo(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/Video.mp4");
     }
 
     @Override

@@ -23,6 +23,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.SurfaceTexture;
 import android.media.MediaMetadataRetriever;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
@@ -54,6 +55,7 @@ public class BackActivity {
     private ViewGroup viewGroup;
     private int frame, maxFrame;
     private Bitmap[] videoFrames;
+    private Timer timer;
 
 
     private static final String BINARY_GRAPH_NAME = "portrait_segmentation_gpu.binarypb";
@@ -185,27 +187,65 @@ public class BackActivity {
         mret.setDataSource(path);
 
         maxFrame = Integer.parseInt(mret.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT));
+        int spf = Integer.parseInt(mret.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) / maxFrame;
         videoFrames = new Bitmap[maxFrame];
-        for (int i = 0; i < maxFrame; i++) {
-            videoFrames[i] = ARGBBitmap(mret.getFrameAtIndex(i));
-        }
-        int fps = Integer.parseInt(mret.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) / maxFrame;
-        mret.close();
+        int preloadCount = 60;
+        if (maxFrame < preloadCount) {
+            for (int i = 0; i < maxFrame; i++) {
+                videoFrames[i] = ARGBBitmap(mret.getFrameAtIndex(i));
+            }
+        } else {
+            long elapsedTime = System.currentTimeMillis();
+            for (int i = 0; i < preloadCount; i++) {
+                videoFrames[i] = ARGBBitmap(mret.getFrameAtIndex(i));
+            }
+            elapsedTime = System.currentTimeMillis() - elapsedTime;
+            double loadTime = (int) (elapsedTime / preloadCount);
 
-        Timer timer = new Timer();
+            int preloadFrames;
+            if (loadTime < (double) spf) {
+                preloadFrames = preloadCount;
+            } else preloadFrames = (int) ((double) maxFrame * (loadTime - (double) spf) / loadTime);
+
+            Log.d("TIME", "Max frames: " + String.valueOf(maxFrame));
+            Log.d("TIME", "Preload frames: " + String.valueOf(preloadFrames));
+            Log.d("TIME", "Load time: " + String.valueOf(loadTime));
+            Log.d("TIME", "Spf: " + String.valueOf(spf));
+            Log.d("TIME", "Estimated time: " + String.valueOf(preloadFrames * loadTime));
+
+            for (int i = preloadCount; i < preloadFrames; i++) {
+                videoFrames[i] = ARGBBitmap(mret.getFrameAtIndex(i));
+            }
+
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = preloadFrames; i < maxFrame; i++) {
+                        videoFrames[i] = ARGBBitmap(mret.getFrameAtIndex(i));
+                    }
+                    mret.release();
+                }
+            });
+        }
+        timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 setVideoFrame();
             }
-        }, 0, fps);
-        Log.d("LOL", "LMAO");
+        }, 0, spf);
     }
 
     @SuppressLint("NewApi")
     private void setVideoFrame() {
         if (frame > maxFrame - 1) frame = 0;
-        setImage(videoFrames[frame]);
+        if (videoFrames[frame] == null) {
+            Log.d("TIME", "OH NO " + frame);
+            frame = 0;
+        } else {
+            setImage(videoFrames[frame]);
+            frame++;
+        }
         frame++;
     }
 
