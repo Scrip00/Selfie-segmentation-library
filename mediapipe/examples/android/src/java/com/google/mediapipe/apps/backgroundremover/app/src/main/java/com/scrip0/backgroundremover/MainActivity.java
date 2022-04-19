@@ -1,5 +1,8 @@
 package com.scrip0.backgroundremover;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
@@ -15,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.scrip0.backremlib.BackActivity;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,10 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
         viewGroup = findViewById(R.id.preview_display_layout);
         img = findViewById(R.id.imgg);
-
         activity = new BackActivity(this, viewGroup);
 
-        activity.setVideo(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/Testt.mp4");
+        activity.setVideo(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/giphy.gif");
     }
 
     @Override

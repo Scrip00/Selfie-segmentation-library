@@ -19,6 +19,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.SurfaceTexture;
 import android.media.MediaMetadataRetriever;
 import android.os.Build;
@@ -155,6 +157,24 @@ public class BackActivity {
         startCamera();
     }
 
+    public void setColor(int color) {
+        Bitmap bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint();
+        paint.setColor(color);
+        canvas.drawRect(0F, 0F, (float) 1, (float) 1, paint);
+        setImage(bitmap);
+    }
+
+    public void setColorARGB(int a, int r, int g, int b) {
+        Bitmap bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint();
+        paint.setARGB(a, r, g, b);
+        canvas.drawRect(0F, 0F, (float) 1, (float) 1, paint);
+        setImage(bitmap);
+    }
+
     public void setImage(Bitmap background) {
         processor.setImageBackground(background);
     }
@@ -179,7 +199,7 @@ public class BackActivity {
                 setVideoFrame();
             }
         }, 0, fps);
-
+        Log.d("LOL", "LMAO");
     }
 
     @SuppressLint("NewApi")
