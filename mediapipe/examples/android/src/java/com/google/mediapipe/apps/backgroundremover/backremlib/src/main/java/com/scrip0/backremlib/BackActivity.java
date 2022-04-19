@@ -14,33 +14,45 @@ package com.scrip0.backremlib;
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
+import android.media.MediaMetadataRetriever;
+import android.os.Build;
+import android.os.Handler;
+import android.util.Log;
 import android.util.Size;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.RequiresApi;
+
 import com.google.mediapipe.components.CameraHelper;
 import com.google.mediapipe.components.CameraXPreviewHelper;
 import com.google.mediapipe.components.ExternalTextureConverter;
 import com.google.mediapipe.framework.AndroidAssetUtil;
-import com.google.mediapipe.framework.Packet;
 import com.google.mediapipe.glutil.EglManager;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
-/** Main activity of MediaPipe example apps. */
+/**
+ * Main activity of MediaPipe example apps.
+ */
 public class BackActivity {
 
     private Context context;
 
     private ViewGroup viewGroup;
+
+    private int frame, maxFrame;
 
 
     private static final String BINARY_GRAPH_NAME = "portrait_segmentation_gpu.binarypb";
@@ -105,12 +117,6 @@ public class BackActivity {
         }
 
         processor.setImageBackground(background);
-
-//        processor.setOnWillAddFrameListener(timestamp -> {
-//            Packet imgNamePacket = processor.getPacketCreator().createString(this.path);
-//            processor.getGraph().addConsumablePacketToInputStream("img_path", imgNamePacket, timestamp);
-//            imgNamePacket.release();
-//        });
     }
 
     private void setupPreviewDisplayView() {
@@ -137,13 +143,13 @@ public class BackActivity {
                         });
     }
 
-    public void pause(){
+    public void pause() {
         converter.close();
         // Hide preview display until we re-open the camera again.
         previewDisplayView.setVisibility(View.GONE);
     }
 
-    public void resume(){
+    public void resume() {
         converter = new ExternalTextureConverter(eglManager.getContext(), 2);
         converter.setFlipY(FLIP_FRAMES_VERTICALLY);
         converter.setConsumer(processor);
@@ -152,6 +158,36 @@ public class BackActivity {
 
     public void setImage(Bitmap background) {
         processor.setImageBackground(background);
+    }
+
+    @SuppressLint("NewApi")
+    public void setVideo(String path) {
+        MediaMetadataRetriever mret = new MediaMetadataRetriever();
+        mret.setDataSource(path);
+        setImage(ARGBBitmap(mret.getFrameAtIndex(15)));
+
+        maxFrame = Integer.parseInt(mret.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT));
+        int fps = Integer.parseInt(mret.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) / maxFrame;
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                setVideoFrame(mret);
+            }
+        }, 0, fps);
+
+    }
+
+    @SuppressLint("NewApi")
+    private void setVideoFrame(MediaMetadataRetriever mret) {
+        if (frame > maxFrame - 1) frame = 0;
+        setImage(mret.getFrameAtIndex(frame));
+        frame++;
+    }
+
+    private Bitmap ARGBBitmap(Bitmap img) {
+        return img.copy(Bitmap.Config.ARGB_8888, true);
     }
 
     protected void onPreviewDisplaySurfaceChanged(

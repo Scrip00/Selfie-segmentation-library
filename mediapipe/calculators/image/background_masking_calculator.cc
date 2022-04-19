@@ -112,7 +112,8 @@ absl::Status BackgroundMaskingCalculator::RenderGpu(CalculatorContext *cc) {
   // background.copyTo(input_frame_mat);
 
   const Packet &path_packet = cc->Inputs().Tag("IMG_PATH").Value();
-  const mediapipe::ImageFrame &input_path = path_packet.Get<mediapipe::ImageFrame>();
+  const mediapipe::ImageFrame &input_path =
+      path_packet.Get<mediapipe::ImageFrame>();
   // background = mediapipe::formats::MatView(&input_path);
 
   auto img_tex = gpu_helper_.CreateSourceTexture(input_buffer);
@@ -225,8 +226,9 @@ absl::Status BackgroundMaskingCalculator::InitGpu(CalculatorContext *cc) {
   //     ::mediapipe::PathToResourceAsFile("dino.jpg");
 
   // const Packet &path_packet = cc->Inputs().Tag("IMG_PATH").Value();
-  // const mediapipe::ImageFrame &input_path = path_packet.Get<mediapipe::ImageFrame>();
-  // background = mediapipe::formats::MatView(&input_path);
+  // const mediapipe::ImageFrame &input_path =
+  // path_packet.Get<mediapipe::ImageFrame>(); background =
+  // mediapipe::formats::MatView(&input_path);
 
   // if (input_path == "Default" && status.ok()) {
   //   background = cv::imread(status.value(), 1);

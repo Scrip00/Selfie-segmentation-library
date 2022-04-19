@@ -11,10 +11,17 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"
         tools:ignore="MissingConstraints">
+
         <TextView
-            android:layout_height="fill_parent"
             android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:gravity="center"
             android:text="NO CAMERA ACCESS" />
+
+        <ImageView
+            android:id="@+id/imgg"
+            android:layout_width="match_parent"
+            android:layout_height="309dp"
+            tools:srcCompat="@tools:sample/avatars" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
