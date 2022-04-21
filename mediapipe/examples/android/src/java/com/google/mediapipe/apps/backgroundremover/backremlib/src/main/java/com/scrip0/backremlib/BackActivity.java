@@ -24,16 +24,12 @@ import android.graphics.Paint;
 import android.graphics.SurfaceTexture;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Handler;
 import android.util.Log;
 import android.util.Size;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-
-import androidx.annotation.RequiresApi;
 
 import com.google.mediapipe.components.CameraHelper;
 import com.google.mediapipe.components.CameraXPreviewHelper;
@@ -137,6 +133,7 @@ public class BackActivity {
                             @Override
                             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
                                 onPreviewDisplaySurfaceChanged(holder, format, width, height);
+                                Log.d("LOL", String.valueOf(viewGroup.getWidth())); // ЫЫЫЫ
                             }
 
                             @Override
@@ -160,29 +157,66 @@ public class BackActivity {
     }
 
     public void setColor(int color) {
+        cleanTimer();
         Bitmap bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         paint.setColor(color);
         canvas.drawRect(0F, 0F, (float) 1, (float) 1, paint);
-        setImage(bitmap);
+        setImage(bitmap, false);
     }
 
     public void setColorARGB(int a, int r, int g, int b) {
+        cleanTimer();
         Bitmap bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         paint.setARGB(a, r, g, b);
         canvas.drawRect(0F, 0F, (float) 1, (float) 1, paint);
-        setImage(bitmap);
+        setImage(bitmap, false);
     }
 
-    public void setImage(Bitmap background) {
-        processor.setImageBackground(background);
+    public void setImage(Bitmap background, boolean crop) {
+        if (crop) {
+            if (previewDisplayView.getMeasuredHeight() == 0) {
+                Timer newTimer = new Timer();
+                newTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (previewDisplayView.getMeasuredWidth() != 0) {
+                            processor.setImageBackground(cropImg(background));
+                            newTimer.cancel();
+                        }
+                    }
+                }, 0, 100);
+            } else {
+                processor.setImageBackground(cropImg(background));
+            }
+        } else
+            processor.setImageBackground(background);
     }
+
+    public Bitmap cropImg(Bitmap img) {
+        int width = previewDisplayView.getMeasuredWidth();
+        int height = previewDisplayView.getMeasuredHeight();
+        double scale = (double) width / height;
+        if ((double) width / height <= (double) img.getWidth() / img.getHeight()) {
+            return Bitmap.createBitmap(img, (int) (img.getWidth() - scale * img.getHeight()) / 2, 0, (int) (scale * img.getHeight()), img.getHeight());
+        } else {
+            Log.d("LOL", String.valueOf((int) (img.getHeight() - scale * img.getWidth()) / 2));
+            return Bitmap.createBitmap(img, 0, (int) (img.getHeight() - scale * img.getWidth()) / 2, img.getWidth(), (int) (scale / img.getWidth()));
+        }
+    }
+
+    public void cleanTimer() {
+        if (timer != null) timer.cancel();
+    }
+
+    // TODO add image crop
 
     @SuppressLint("NewApi")
     public void setVideo(String path) {
+        cleanTimer();
         MediaMetadataRetriever mret = new MediaMetadataRetriever();
         mret.setDataSource(path);
 
@@ -243,7 +277,7 @@ public class BackActivity {
             Log.d("TIME", "OH NO " + frame);
             frame = 0;
         } else {
-            setImage(videoFrames[frame]);
+            setImage(videoFrames[frame], false);
             frame++;
         }
         frame++;

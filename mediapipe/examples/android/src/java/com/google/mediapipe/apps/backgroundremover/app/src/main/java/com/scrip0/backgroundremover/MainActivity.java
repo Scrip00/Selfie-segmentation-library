@@ -1,14 +1,9 @@
 package com.scrip0.backgroundremover;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.media.MediaMetadataRetriever;
-import android.net.Uri;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -36,8 +31,12 @@ public class MainActivity extends AppCompatActivity {
         viewGroup = findViewById(R.id.preview_display_layout);
         img = findViewById(R.id.imgg);
         activity = new BackActivity(this, viewGroup);
-
-        activity.setVideo(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/Video.mp4");
+//        activity.setVideo(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/Video.mp4");
+        try {
+            activity.setImage(BitmapFactory.decodeStream(getAssets().open("img.png")), true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
