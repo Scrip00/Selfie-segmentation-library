@@ -52,6 +52,7 @@ public class BackActivity {
     private int frame, maxFrame;
     private Bitmap[] videoFrames;
     private Timer timer;
+    private boolean isVideoPlaying;
 
 
     private static final String BINARY_GRAPH_NAME = "portrait_segmentation_gpu.binarypb";
@@ -91,6 +92,8 @@ public class BackActivity {
     public BackActivity(Context context, ViewGroup viewGroup) {
         this.context = context;
         this.viewGroup = viewGroup;
+
+        isVideoPlaying = false;
 
         previewDisplayView = new SurfaceView(context);
         setupPreviewDisplayView();
@@ -133,7 +136,6 @@ public class BackActivity {
                             @Override
                             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
                                 onPreviewDisplaySurfaceChanged(holder, format, width, height);
-                                Log.d("LOL", String.valueOf(viewGroup.getWidth())); // ЫЫЫЫ
                             }
 
                             @Override
@@ -157,6 +159,7 @@ public class BackActivity {
     }
 
     public void setColor(int color) {
+        isVideoPlaying = false;
         cleanTimer();
         Bitmap bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -167,6 +170,7 @@ public class BackActivity {
     }
 
     public void setColorARGB(int a, int r, int g, int b) {
+        isVideoPlaying = false;
         cleanTimer();
         Bitmap bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -176,24 +180,30 @@ public class BackActivity {
         setImage(bitmap, false);
     }
 
-    public void setImage(Bitmap background, boolean crop) {
-        if (crop) {
-            if (previewDisplayView.getMeasuredHeight() == 0) {
-                Timer newTimer = new Timer();
-                newTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (previewDisplayView.getMeasuredWidth() != 0) {
-                            processor.setImageBackground(cropImg(background));
-                            newTimer.cancel();
-                        }
-                    }
-                }, 0, 100);
-            } else {
+    public void setImageBackground(Bitmap background, boolean crop) {
+        isVideoPlaying = false;
+        setImage(background, crop);
+    }
+
+    private void setImage(Bitmap background, boolean crop) {
+        if (previewDisplayView.getMeasuredHeight() == 0) {
+            previewDisplayView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                    if (!isVideoPlaying) cleanTimer();
+                    if (crop) {
+                        processor.setImageBackground(cropImg(background));
+                    } else
+                        processor.setImageBackground(background);
+                }
+            });
+        } else {
+            if (!isVideoPlaying) cleanTimer();
+            if (crop) {
                 processor.setImageBackground(cropImg(background));
-            }
-        } else
-            processor.setImageBackground(background);
+            } else
+                processor.setImageBackground(background);
+        }
     }
 
     public Bitmap cropImg(Bitmap img) {
@@ -203,7 +213,6 @@ public class BackActivity {
         if ((double) width / height <= (double) img.getWidth() / img.getHeight()) {
             return Bitmap.createBitmap(img, (int) (img.getWidth() - scale * img.getHeight()) / 2, 0, (int) (scale * img.getHeight()), img.getHeight());
         } else {
-            Log.d("LOL", String.valueOf((int) (img.getHeight() - scale * img.getWidth()) / 2));
             return Bitmap.createBitmap(img, 0, (int) (img.getHeight() - scale * img.getWidth()) / 2, img.getWidth(), (int) (scale / img.getWidth()));
         }
     }
@@ -212,11 +221,10 @@ public class BackActivity {
         if (timer != null) timer.cancel();
     }
 
-    // TODO add image crop
-
     @SuppressLint("NewApi")
-    public void setVideo(String path) {
+    public void setVideo(String path, boolean crop) {
         cleanTimer();
+        isVideoPlaying = true;
         MediaMetadataRetriever mret = new MediaMetadataRetriever();
         mret.setDataSource(path);
 
@@ -265,19 +273,18 @@ public class BackActivity {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                setVideoFrame();
+                setVideoFrame(crop);
             }
         }, 0, spf);
     }
 
     @SuppressLint("NewApi")
-    private void setVideoFrame() {
+    private void setVideoFrame(boolean crop) {
         if (frame > maxFrame - 1) frame = 0;
         if (videoFrames[frame] == null) {
-            Log.d("TIME", "OH NO " + frame);
             frame = 0;
         } else {
-            setImage(videoFrames[frame], false);
+            setImage(videoFrames[frame], crop);
             frame++;
         }
         frame++;
