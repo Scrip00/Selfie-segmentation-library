@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.SurfaceTexture;
 import android.media.MediaMetadataRetriever;
@@ -89,6 +90,11 @@ public class BackActivity {
     // Store current video-frame number and total number of frames
     private int frame, maxFrame;
 
+    // Stores video second per frame
+    private long spf;
+
+    private boolean cropVideo;
+
     // Stores all video-frames
     private Bitmap[] videoFrames;
     private Timer timer;
@@ -147,6 +153,7 @@ public class BackActivity {
         converter.close();
         // Hide preview display until we re-open the camera again.
         previewDisplayView.setVisibility(View.GONE);
+        cleanTimer();
     }
 
     public void resume() {
@@ -154,6 +161,13 @@ public class BackActivity {
         converter.setFlipY(FLIP_FRAMES_VERTICALLY);
         converter.setConsumer(processor);
         startCamera();
+        if (isVideoPlaying) {
+            if (spf == -1) {
+                partymode();
+            } else {
+                continueVideo();
+            }
+        }
     }
 
     public void setColor(int color) {
@@ -185,8 +199,8 @@ public class BackActivity {
     }
 
     private void setImage(Bitmap background, boolean crop) throws NullPointerException {
-        if (background == null && crop) throw new NullPointerException("Background image should not be null");
-        Log.d("LOL", String.valueOf(crop));
+        if (background == null && crop)
+            throw new NullPointerException("Background image should not be null");
         if (previewDisplayView.getMeasuredHeight() == 0) {
             previewDisplayView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                 @Override
@@ -205,6 +219,36 @@ public class BackActivity {
             } else
                 processor.setImageBackground(background);
         }
+    }
+
+    public void partymode() {
+        spf = -1;
+        isVideoPlaying = true;
+        cleanTimer();
+        timer = new Timer();
+        final int ARRAY_SIZE = 300;
+        final int MAX_COLOR = 360;
+        final int MIN_COLOR = 0;
+        double jump = (MAX_COLOR - MIN_COLOR) / (ARRAY_SIZE * 1.0);
+        int[] colors = new int[ARRAY_SIZE];
+        for (int i = 0; i < colors.length; i++) {
+            colors[i] = Color.HSVToColor(new float[]{(float) (MIN_COLOR + (jump * i)), 1.0f, 1.0f});
+        }
+        timer.schedule(new TimerTask() {
+            int i = 0;
+
+            @Override
+            public void run() {
+                Bitmap bitmap = Bitmap.createBitmap(2, 2, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(bitmap);
+                Paint paint = new Paint();
+                paint.setColor(colors[i]);
+                i++;
+                if (i >= colors.length) i = 0;
+                canvas.drawRect(0F, 0F, (float) 2, (float) 2, paint);
+                setImage(bitmap, false);
+            }
+        }, 0, 1);
     }
 
     public Bitmap cropImg(Bitmap img) {
@@ -228,9 +272,11 @@ public class BackActivity {
         isVideoPlaying = true;
         MediaMetadataRetriever mret = new MediaMetadataRetriever();
         mret.setDataSource(path);
+        cropVideo = crop;
 
         maxFrame = Integer.parseInt(mret.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT));
-        int spf = Integer.parseInt(mret.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) / maxFrame;
+
+        spf = Integer.parseInt(mret.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) / maxFrame;
         videoFrames = new Bitmap[maxFrame];
         int preloadCount = 60;
         if (maxFrame < preloadCount) {
@@ -269,6 +315,16 @@ public class BackActivity {
             @Override
             public void run() {
                 setVideoFrame(crop);
+            }
+        }, 0, spf);
+    }
+
+    private void continueVideo() {
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                setVideoFrame(cropVideo);
             }
         }, 0, spf);
     }
