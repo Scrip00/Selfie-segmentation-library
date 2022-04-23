@@ -28,13 +28,14 @@ public class MainActivity extends AppCompatActivity {
 
         viewGroup = findViewById(R.id.preview_display_layout);
         activity = new BackActivity(this, viewGroup);
-//        activity.setVideo(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/Helpme.mp4", false);
-//        try {
-//            activity.setImageBackground(BitmapFactory.decodeStream(getAssets().open("img.png")), true);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        activity.setColor(Color.BLUE);
+        activity.setVideo(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/Helpme.mp4", false);
+        try {
+            activity.setImageBackground(BitmapFactory.decodeStream(getAssets().open("img.png")), true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        activity.setColor(Color.BLUE);
+        activity.setImageBackground(null, false);
     }
 
     @Override

@@ -109,7 +109,10 @@ absl::Status BackgroundMaskingCalculator::RenderGpu(CalculatorContext *cc) {
 
   auto img_tex = gpu_helper_.CreateSourceTexture(input_buffer);
   auto mask_tex = gpu_helper_.CreateSourceTexture(mask_buffer);
-  auto back_tex = gpu_helper_.CreateSourceTexture(input_path);
+  auto back_tex = gpu_helper_.CreateSourceTexture(input_buffer);
+  if (input_path.Height() > 1) {
+    back_tex = gpu_helper_.CreateSourceTexture(input_path);
+  }
   auto dst_tex =
       gpu_helper_.CreateDestinationTexture(img_tex.width(), img_tex.height());
 

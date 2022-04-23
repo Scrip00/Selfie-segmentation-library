@@ -117,15 +117,6 @@ public class BackActivity {
                         "img_path",
                         OUTPUT_VIDEO_STREAM_NAME);
         processor.getVideoSurfaceOutput().setFlipY(FLIP_FRAMES_VERTICALLY);
-//        Bitmap background = null;
-//        try {
-//            InputStream ims = context.getAssets().open("dino.jpg");
-//            background = BitmapFactory.decodeStream(ims);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        processor.setImageBackground(background);
     }
 
     private void setupPreviewDisplayView() {
@@ -168,22 +159,22 @@ public class BackActivity {
     public void setColor(int color) {
         isVideoPlaying = false;
         cleanTimer();
-        Bitmap bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(2, 2, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         paint.setColor(color);
-        canvas.drawRect(0F, 0F, (float) 1, (float) 1, paint);
+        canvas.drawRect(0F, 0F, (float) 2, (float) 2, paint);
         setImage(bitmap, false);
     }
 
     public void setColorARGB(int a, int r, int g, int b) {
         isVideoPlaying = false;
         cleanTimer();
-        Bitmap bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(2, 2, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         paint.setARGB(a, r, g, b);
-        canvas.drawRect(0F, 0F, (float) 1, (float) 1, paint);
+        canvas.drawRect(0F, 0F, (float) 2, (float) 2, paint);
         setImage(bitmap, false);
     }
 
@@ -193,7 +184,8 @@ public class BackActivity {
         setImage(background, crop);
     }
 
-    private void setImage(Bitmap background, boolean crop) {
+    private void setImage(Bitmap background, boolean crop) throws NullPointerException {
+        if (background == null && crop) throw new NullPointerException("Background image should not be null");
         Log.d("LOL", String.valueOf(crop));
         if (previewDisplayView.getMeasuredHeight() == 0) {
             previewDisplayView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
