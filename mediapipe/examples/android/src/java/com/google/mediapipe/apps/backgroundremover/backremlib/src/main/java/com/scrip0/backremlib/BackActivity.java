@@ -46,15 +46,6 @@ import java.util.TimerTask;
  * Main activity of MediaPipe example apps.
  */
 public class BackActivity {
-
-    private Context context;
-    private ViewGroup viewGroup;
-    private int frame, maxFrame;
-    private Bitmap[] videoFrames;
-    private Timer timer;
-    private boolean isVideoPlaying;
-
-
     private static final String BINARY_GRAPH_NAME = "portrait_segmentation_gpu.binarypb";
     private static final String INPUT_VIDEO_STREAM_NAME = "input_video";
     private static final String OUTPUT_VIDEO_STREAM_NAME = "output_video";
@@ -89,6 +80,22 @@ public class BackActivity {
     // Handles camera access via the {@link CameraX} Jetpack support library.
     private CameraXPreviewHelper cameraHelper;
 
+    // Stores app context
+    private final Context context;
+
+    // Stores view
+    private final ViewGroup viewGroup;
+
+    // Store current video-frame number and total number of frames
+    private int frame, maxFrame;
+
+    // Stores all video-frames
+    private Bitmap[] videoFrames;
+    private Timer timer;
+
+    // Needed to clean timer if video stopped
+    private boolean isVideoPlaying;
+
     public BackActivity(Context context, ViewGroup viewGroup) {
         this.context = context;
         this.viewGroup = viewGroup;
@@ -110,15 +117,15 @@ public class BackActivity {
                         "img_path",
                         OUTPUT_VIDEO_STREAM_NAME);
         processor.getVideoSurfaceOutput().setFlipY(FLIP_FRAMES_VERTICALLY);
-        Bitmap background = null;
-        try {
-            InputStream ims = context.getAssets().open("dino.jpg");
-            background = BitmapFactory.decodeStream(ims);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        processor.setImageBackground(background);
+//        Bitmap background = null;
+//        try {
+//            InputStream ims = context.getAssets().open("dino.jpg");
+//            background = BitmapFactory.decodeStream(ims);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        processor.setImageBackground(background);
     }
 
     private void setupPreviewDisplayView() {
@@ -182,10 +189,12 @@ public class BackActivity {
 
     public void setImageBackground(Bitmap background, boolean crop) {
         isVideoPlaying = false;
+        cleanTimer();
         setImage(background, crop);
     }
 
     private void setImage(Bitmap background, boolean crop) {
+        Log.d("LOL", String.valueOf(crop));
         if (previewDisplayView.getMeasuredHeight() == 0) {
             previewDisplayView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                 @Override
@@ -249,12 +258,6 @@ public class BackActivity {
                 preloadFrames = preloadCount;
             } else preloadFrames = (int) ((double) maxFrame * (loadTime - (double) spf) / loadTime);
 
-            Log.d("TIME", "Max frames: " + String.valueOf(maxFrame));
-            Log.d("TIME", "Preload frames: " + String.valueOf(preloadFrames));
-            Log.d("TIME", "Load time: " + String.valueOf(loadTime));
-            Log.d("TIME", "Spf: " + String.valueOf(spf));
-            Log.d("TIME", "Estimated time: " + String.valueOf(preloadFrames * loadTime));
-
             for (int i = preloadCount; i < preloadFrames; i++) {
                 videoFrames[i] = ARGBBitmap(mret.getFrameAtIndex(i));
             }
@@ -281,6 +284,7 @@ public class BackActivity {
     @SuppressLint("NewApi")
     private void setVideoFrame(boolean crop) {
         if (frame > maxFrame - 1) frame = 0;
+        if (videoFrames == null) return;
         if (videoFrames[frame] == null) {
             frame = 0;
         } else {

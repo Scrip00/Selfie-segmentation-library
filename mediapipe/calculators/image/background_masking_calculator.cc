@@ -67,8 +67,6 @@ absl::Status BackgroundMaskingCalculator::Open(CalculatorContext *cc) {
 
   MP_RETURN_IF_ERROR(gpu_helper_.Open(cc));
 
-  // cv::resize(background, background, Size(100, 100));
-
   return absl::OkStatus();
 }
 
@@ -105,25 +103,15 @@ absl::Status BackgroundMaskingCalculator::RenderGpu(CalculatorContext *cc) {
   const auto &input_buffer = input_packet.Get<mediapipe::GpuBuffer>();
   const auto &mask_buffer = mask_packet.Get<mediapipe::GpuBuffer>();
 
-  // auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
-  //     mediapipe::ImageFormat::SRGB, background.cols, background.rows,
-  //     mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
-  // cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
-  // background.copyTo(input_frame_mat);
-
   const Packet &path_packet = cc->Inputs().Tag("IMG_PATH").Value();
   const mediapipe::ImageFrame &input_path =
       path_packet.Get<mediapipe::ImageFrame>();
-  // background = mediapipe::formats::MatView(&input_path);
 
   auto img_tex = gpu_helper_.CreateSourceTexture(input_buffer);
   auto mask_tex = gpu_helper_.CreateSourceTexture(mask_buffer);
   auto back_tex = gpu_helper_.CreateSourceTexture(input_path);
   auto dst_tex =
       gpu_helper_.CreateDestinationTexture(img_tex.width(), img_tex.height());
-
-  // cv::resize(background, background, Size(img_tex.width(),
-  // img_tex.height()));
 
   // Run recolor shader on GPU.
 
@@ -222,25 +210,6 @@ absl::Status BackgroundMaskingCalculator::Close(CalculatorContext *cc) {
 
 absl::Status BackgroundMaskingCalculator::InitGpu(CalculatorContext *cc) {
 
-  // mediapipe::StatusOr<std::string> status =
-  //     ::mediapipe::PathToResourceAsFile("dino.jpg");
-
-  // const Packet &path_packet = cc->Inputs().Tag("IMG_PATH").Value();
-  // const mediapipe::ImageFrame &input_path =
-  // path_packet.Get<mediapipe::ImageFrame>(); background =
-  // mediapipe::formats::MatView(&input_path);
-
-  // if (input_path == "Default" && status.ok()) {
-  //   background = cv::imread(status.value(), 1);
-  // } else {
-  //   cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
-  //   background.copyTo(input_frame_mat);
-
-  //   mediapipe::StatusOr<std::string> statusO =
-  //       ::mediapipe::PathToResourceAsFile(input_path);
-  //   background = cv::imread(statusO.value(), 1);
-  // }
-
   const GLint attr_location[NUM_ATTRIBUTES] = {
       ATTRIB_VERTEX,
       ATTRIB_TEXTURE_POSITION,
@@ -283,14 +252,16 @@ absl::Status BackgroundMaskingCalculator::InitGpu(CalculatorContext *cc) {
  	void main()
  	{
  		vec4 weight = texture2D(mask, sample_coordinate);
- 		vec4 color1 = texture2D(frame, sample_coordinate);
- 		vec4 color2 = texture2D(background, sample_coordinate);
+ 		vec4 foreground = texture2D(frame, sample_coordinate);
+ 		vec4 back = texture2D(background, sample_coordinate);
 
  		weight = mix(weight, 1.0 - weight, invert_mask);
 
  		float mix_value = weight.MASK_COMPONENT;
 
- 		fragColor = mix(color1, color2, mix_value);
+    // mix_value = mix_value > 0.5 ? 1.0 : 0.0;
+
+ 		fragColor = mix(foreground, back, mix_value);
  	}
 )";
 

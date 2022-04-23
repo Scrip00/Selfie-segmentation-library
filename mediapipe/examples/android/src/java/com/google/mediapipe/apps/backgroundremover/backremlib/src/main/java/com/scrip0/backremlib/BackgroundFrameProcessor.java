@@ -7,6 +7,8 @@ package com.scrip0.backremlib;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.media.AudioFormat;
 import android.media.AudioFormat.Builder;
 import android.os.Build;
@@ -32,6 +34,7 @@ import com.google.mediapipe.framework.PacketGetter;
 import com.google.mediapipe.framework.SurfaceOutput;
 import com.google.mediapipe.framework.TextureFrame;
 import com.google.mediapipe.proto.CalculatorProto.CalculatorGraphConfig;
+
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -40,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.annotation.Nullable;
 
 public class BackgroundFrameProcessor implements TextureFrameProcessor, AudioDataProcessor {
@@ -87,7 +91,9 @@ public class BackgroundFrameProcessor implements TextureFrameProcessor, AudioDat
         this.useImage = use;
     }
 
-    public void setImageBackground(Bitmap imageBackground) { this.imageBackground = imageBackground; }
+    public void setImageBackground(Bitmap imageBackground) {
+        this.imageBackground = imageBackground;
+    }
 
     private void initializeGraphAndPacketCreator(Context context, String graphName) {
         this.mediapipeGraph = new Graph();
@@ -127,14 +133,14 @@ public class BackgroundFrameProcessor implements TextureFrameProcessor, AudioDat
             this.mediapipeGraph.addPacketCallback(this.videoOutputStream, new PacketCallback() {
                 public void process(Packet packet) {
                     List currentConsumers;
-                    synchronized(this) {
+                    synchronized (this) {
                         currentConsumers = BackgroundFrameProcessor.this.videoConsumers;
                     }
 
                     TextureFrameConsumer consumer;
                     GraphTextureFrame frame;
-                    for(Iterator var3 = currentConsumers.iterator(); var3.hasNext(); consumer.onNewFrame(frame)) {
-                        consumer = (TextureFrameConsumer)var3.next();
+                    for (Iterator var3 = currentConsumers.iterator(); var3.hasNext(); consumer.onNewFrame(frame)) {
+                        consumer = (TextureFrameConsumer) var3.next();
                         frame = PacketGetter.getTextureFrame(packet);
                         if (Log.isLoggable("FrameProcessor", Log.VERBOSE)) {
                             Log.v("FrameProcessor", String.format("Output tex: %d width: %d height: %d to consumer %h", frame.getTextureName(), frame.getWidth(), frame.getHeight(), consumer));
@@ -160,18 +166,18 @@ public class BackgroundFrameProcessor implements TextureFrameProcessor, AudioDat
 
         if (this.audioOutputStream != null) {
             int outputAudioChannelMask = numOutputChannels == 2 ? 12 : 16;
-            final AudioFormat audioFormat = (new Builder()).setEncoding(AudioFormat.ENCODING_PCM_16BIT).setSampleRate((int)this.audioSampleRate).setChannelMask(outputAudioChannelMask).build();
+            final AudioFormat audioFormat = (new Builder()).setEncoding(AudioFormat.ENCODING_PCM_16BIT).setSampleRate((int) this.audioSampleRate).setChannelMask(outputAudioChannelMask).build();
             this.mediapipeGraph.addPacketCallback(this.audioOutputStream, new PacketCallback() {
                 public void process(Packet packet) {
                     List currentAudioConsumers;
-                    synchronized(this) {
+                    synchronized (this) {
                         currentAudioConsumers = BackgroundFrameProcessor.this.audioConsumers;
                     }
 
                     Iterator var3 = currentAudioConsumers.iterator();
 
-                    while(var3.hasNext()) {
-                        AudioDataConsumer consumer = (AudioDataConsumer)var3.next();
+                    while (var3.hasNext()) {
+                        AudioDataConsumer consumer = (AudioDataConsumer) var3.next();
                         byte[] buffer = PacketGetter.getAudioByteData(packet);
                         ByteBuffer audioData = ByteBuffer.wrap(buffer);
                         consumer.onNewAudioData(audioData, packet.getTimestamp(), audioFormat);
@@ -193,13 +199,13 @@ public class BackgroundFrameProcessor implements TextureFrameProcessor, AudioDat
     }
 
     public void setConsumer(TextureFrameConsumer consumer) {
-        synchronized(this) {
+        synchronized (this) {
             this.videoConsumers = Arrays.asList(consumer);
         }
     }
 
     public void setAudioConsumer(AudioDataConsumer consumer) {
-        synchronized(this) {
+        synchronized (this) {
             this.audioConsumers = Arrays.asList(consumer);
         }
     }
@@ -213,7 +219,7 @@ public class BackgroundFrameProcessor implements TextureFrameProcessor, AudioDat
     }
 
     public void addConsumer(TextureFrameConsumer consumer) {
-        synchronized(this) {
+        synchronized (this) {
             List<TextureFrameConsumer> newConsumers = new ArrayList(this.videoConsumers);
             newConsumers.add(consumer);
             this.videoConsumers = newConsumers;
@@ -221,7 +227,7 @@ public class BackgroundFrameProcessor implements TextureFrameProcessor, AudioDat
     }
 
     public boolean removeConsumer(TextureFrameConsumer listener) {
-        synchronized(this) {
+        synchronized (this) {
             List<TextureFrameConsumer> newConsumers = new ArrayList(this.videoConsumers);
             boolean existed = newConsumers.remove(listener);
             this.videoConsumers = newConsumers;
@@ -287,10 +293,6 @@ public class BackgroundFrameProcessor implements TextureFrameProcessor, AudioDat
         Packet backgroundImagePacket = null;
         long timestamp = frame.getTimestamp();
 
-        if (this.imageBackground == null) {
-            throw new NullPointerException();
-        }
-
         try {
             if (Log.isLoggable("FrameProcessor", Log.VERBOSE)) {
                 Log.v("FrameProcessor", String.format("Input tex: %d width: %d height: %d", frame.getTextureName(), frame.getWidth(), frame.getHeight()));
@@ -307,13 +309,20 @@ public class BackgroundFrameProcessor implements TextureFrameProcessor, AudioDat
                     imagePacket = this.packetCreator.createGpuBuffer(frame);
                 }
 
-                backgroundImagePacket = this.getPacketCreator().createRgbImageFrame(imageBackground);
+                if (imageBackground == null) {
+                    imageBackground = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(imageBackground);
+                    Paint paint = new Paint();
+                    paint.setAlpha(0);
+                    canvas.drawRect(0F, 0F, (float) 1, (float) 1, paint);
+                }
 
+                backgroundImagePacket = this.packetCreator.createRgbImageFrame(imageBackground);
                 frame = null;
 
                 try {
-                    this.mediapipeGraph.addConsumablePacketToInputStream(this.videoInputStream, imagePacket, timestamp);
                     this.mediapipeGraph.addConsumablePacketToInputStream(this.backgroundOutputStream, backgroundImagePacket, timestamp);
+                    this.mediapipeGraph.addConsumablePacketToInputStream(this.videoInputStream, imagePacket, timestamp);
                     imagePacket = null;
                     backgroundImagePacket = null;
                     return;
@@ -416,7 +425,7 @@ public class BackgroundFrameProcessor implements TextureFrameProcessor, AudioDat
                 this.startGraph();
             }
 
-            if (audioFormat.getChannelCount() == this.numAudioChannels && (double)audioFormat.getSampleRate() == this.audioSampleRate && audioFormat.getEncoding() == 2) {
+            if (audioFormat.getChannelCount() == this.numAudioChannels && (double) audioFormat.getSampleRate() == this.audioSampleRate && audioFormat.getEncoding() == 2) {
                 Preconditions.checkNotNull(this.audioInputStream);
                 int numSamples = audioData.limit() / 2 / this.numAudioChannels;
                 audioPacket = this.packetCreator.createAudioPacket(audioData, this.numAudioChannels, numSamples);
@@ -453,7 +462,7 @@ public class BackgroundFrameProcessor implements TextureFrameProcessor, AudioDat
     }
 
     public void addAudioConsumer(AudioDataConsumer consumer) {
-        synchronized(this) {
+        synchronized (this) {
             List<AudioDataConsumer> newConsumers = new ArrayList(this.audioConsumers);
             newConsumers.add(consumer);
             this.audioConsumers = newConsumers;
@@ -461,7 +470,7 @@ public class BackgroundFrameProcessor implements TextureFrameProcessor, AudioDat
     }
 
     public boolean removeAudioConsumer(AudioDataConsumer consumer) {
-        synchronized(this) {
+        synchronized (this) {
             List<AudioDataConsumer> newConsumers = new ArrayList(this.audioConsumers);
             boolean existed = newConsumers.remove(consumer);
             this.audioConsumers = newConsumers;

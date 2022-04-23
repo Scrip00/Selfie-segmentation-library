@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ViewGroup viewGroup;
     private BackActivity activity;
-    private ImageView img;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -28,15 +27,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         viewGroup = findViewById(R.id.preview_display_layout);
-        img = findViewById(R.id.imgg);
         activity = new BackActivity(this, viewGroup);
-        activity.setVideo(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/Helpme.mp4", true);
-        try {
-            activity.setImageBackground(BitmapFactory.decodeStream(getAssets().open("img.png")), true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        activity.setColor(Color.BLUE);
+//        activity.setVideo(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/Helpme.mp4", false);
+//        try {
+//            activity.setImageBackground(BitmapFactory.decodeStream(getAssets().open("img.png")), true);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        activity.setColor(Color.BLUE);
     }
 
     @Override

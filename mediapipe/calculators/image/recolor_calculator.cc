@@ -472,8 +472,10 @@ absl::Status BackgroundMaskingCalculator::InitGpu(CalculatorContext* cc) {
       vec4 color1 = texture2D(frame, sample_coordinate);
       vec4 color2 = vec4(recolor, 1.0);
 
+      if (invert_mask > 0) invert_mask = 0;
+ 
       weight = mix(weight, 1.0 - weight, invert_mask);
-
+      
       float luminance = mix(1.0,
                             dot(color1.rgb, vec3(0.299, 0.587, 0.114)),
                             adjust_with_luminance);
