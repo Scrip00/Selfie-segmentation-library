@@ -17,11 +17,37 @@
             android:layout_height="fill_parent"
             android:gravity="center"
             android:text="NO CAMERA ACCESS" />
-
-        <ImageView
-            android:id="@+id/imgg"
-            android:layout_width="match_parent"
-            android:layout_height="309dp"
-            tools:srcCompat="@tools:sample/avatars" />
     </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/setVideoBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="160dp"
+            android:text="I fucked up" />
+
+        <Button
+            android:id="@+id/setPartyBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="80dp"
+            android:text="I have epilepsy" />
+
+        <Button
+            android:id="@+id/setImageBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:text="Choose image" />
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

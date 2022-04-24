@@ -18,7 +18,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -38,10 +37,10 @@ import com.google.mediapipe.components.ExternalTextureConverter;
 import com.google.mediapipe.framework.AndroidAssetUtil;
 import com.google.mediapipe.glutil.EglManager;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
+
+// TODO optimize imports
 
 /**
  * Main activity of MediaPipe example apps.
@@ -103,6 +102,7 @@ public class BackActivity {
     private boolean isVideoPlaying;
 
     public BackActivity(Context context, ViewGroup viewGroup) {
+        Log.d("LOL", "CREATED");
         this.context = context;
         this.viewGroup = viewGroup;
 
@@ -193,6 +193,7 @@ public class BackActivity {
     }
 
     public void setImageBackground(Bitmap background, boolean crop) {
+        Log.d("LOL", "BACK");
         isVideoPlaying = false;
         cleanTimer();
         setImage(background, crop);
@@ -366,7 +367,7 @@ public class BackActivity {
         return new Size(width, height);
     }
 
-    private void startCamera() {
+    public void startCamera() {
         cameraHelper = new CameraXPreviewHelper();
         previewFrameTexture = converter.getSurfaceTexture();
         cameraHelper.setOnCameraStartedListener(
