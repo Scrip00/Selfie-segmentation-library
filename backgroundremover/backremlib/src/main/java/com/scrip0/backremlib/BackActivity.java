@@ -24,7 +24,6 @@ import android.graphics.Paint;
 import android.graphics.SurfaceTexture;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.util.Size;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -40,14 +39,13 @@ import com.google.mediapipe.glutil.EglManager;
 import java.util.Timer;
 import java.util.TimerTask;
 
-// TODO optimize imports
-
 /**
  * Main activity of MediaPipe example apps.
  */
 public class BackActivity {
     private static final String BINARY_GRAPH_NAME = "portrait_segmentation_gpu.binarypb";
     private static final String INPUT_VIDEO_STREAM_NAME = "input_video";
+    private static final String INPUT_BACKGROUND_STREAM_NAME = "img_path";
     private static final String OUTPUT_VIDEO_STREAM_NAME = "output_video";
     private static final CameraHelper.CameraFacing CAMERA_FACING = CameraHelper.CameraFacing.FRONT;
 
@@ -66,13 +64,13 @@ public class BackActivity {
     // {@link SurfaceTexture} where the camera-preview frames can be accessed.
     private SurfaceTexture previewFrameTexture;
     // {@link SurfaceView} that displays the camera-preview frames processed by a MediaPipe graph.
-    private SurfaceView previewDisplayView;
+    private final SurfaceView previewDisplayView;
 
     // Creates and manages an {@link EGLContext}.
-    private EglManager eglManager;
+    private final EglManager eglManager;
     // Sends camera-preview frames into a MediaPipe graph for processing, and displays the processed
     // frames onto a {@link Surface}.
-    private BackgroundFrameProcessor processor;
+    private final BackgroundFrameProcessor processor;
     // Converts the GL_TEXTURE_EXTERNAL_OES texture from Android camera into a regular texture to be
     // consumed by {@link FrameProcessor} and the underlying MediaPipe graph.
     private ExternalTextureConverter converter;
@@ -102,7 +100,6 @@ public class BackActivity {
     private boolean isVideoPlaying;
 
     public BackActivity(Context context, ViewGroup viewGroup) {
-        Log.d("LOL", "CREATED");
         this.context = context;
         this.viewGroup = viewGroup;
 
@@ -114,13 +111,15 @@ public class BackActivity {
         AndroidAssetUtil.initializeNativeAssetManager(context);
 
         eglManager = new EglManager(null);
+
+        // Initialize processor
         processor =
                 new BackgroundFrameProcessor(
                         context,
                         eglManager.getNativeContext(),
                         BINARY_GRAPH_NAME,
                         INPUT_VIDEO_STREAM_NAME,
-                        "img_path",
+                        INPUT_BACKGROUND_STREAM_NAME,
                         OUTPUT_VIDEO_STREAM_NAME);
         processor.getVideoSurfaceOutput().setFlipY(FLIP_FRAMES_VERTICALLY);
     }
@@ -157,6 +156,7 @@ public class BackActivity {
     }
 
     public void resume() {
+        // Resume camera process
         converter = new ExternalTextureConverter(eglManager.getContext(), 2);
         converter.setFlipY(FLIP_FRAMES_VERTICALLY);
         converter.setConsumer(processor);
@@ -173,37 +173,40 @@ public class BackActivity {
     public void setColor(int color) {
         isVideoPlaying = false;
         cleanTimer();
+        // Create a small colored bitmap that later will be stretched and placed on the background
         Bitmap bitmap = Bitmap.createBitmap(2, 2, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         paint.setColor(color);
         canvas.drawRect(0F, 0F, (float) 2, (float) 2, paint);
+        // Set the result image as background image
         setImage(bitmap, false);
     }
 
     public void setColorARGB(int a, int r, int g, int b) {
         isVideoPlaying = false;
         cleanTimer();
+        // Create a small colored bitmap that later will be stretched and placed on the background
         Bitmap bitmap = Bitmap.createBitmap(2, 2, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         paint.setARGB(a, r, g, b);
         canvas.drawRect(0F, 0F, (float) 2, (float) 2, paint);
+        // Set the result image as background image
         setImage(bitmap, false);
     }
 
     public void setImageBackground(Bitmap background, boolean crop) {
-        Log.d("LOL", "BACK");
         isVideoPlaying = false;
         cleanTimer();
         setImage(background, crop);
     }
 
     private void setImage(Bitmap background, boolean crop) throws NullPointerException {
-        if (background == null && crop)
+        if (background == null && crop) // If you want to clean the background, call setImage(null, false);
             throw new NullPointerException("Background image should not be null");
-        if (previewDisplayView.getMeasuredHeight() == 0) {
-            previewDisplayView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+        if (previewDisplayView.getMeasuredHeight() == 0) { // If layout is not loaded yet
+            previewDisplayView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() { // Wait until it's loaded and set background
                 @Override
                 public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
                     if (!isVideoPlaying) cleanTimer();
@@ -223,11 +226,11 @@ public class BackActivity {
     }
 
     public void partymode() {
-        spf = -1;
+        spf = -1; // If spf is -1, partymode is on
         isVideoPlaying = true;
         cleanTimer();
         timer = new Timer();
-        final int ARRAY_SIZE = 300;
+        final int ARRAY_SIZE = 300; // Initialize color range, code taken from StackOverflow
         final int MAX_COLOR = 360;
         final int MIN_COLOR = 0;
         double jump = (MAX_COLOR - MIN_COLOR) / (ARRAY_SIZE * 1.0);
@@ -240,10 +243,12 @@ public class BackActivity {
 
             @Override
             public void run() {
+                // Create small image and place it as background
                 Bitmap bitmap = Bitmap.createBitmap(2, 2, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(bitmap);
                 Paint paint = new Paint();
                 paint.setColor(colors[i]);
+                // Iterate over color range
                 i++;
                 if (i >= colors.length) i = 0;
                 canvas.drawRect(0F, 0F, (float) 2, (float) 2, paint);
@@ -279,28 +284,33 @@ public class BackActivity {
 
         spf = Integer.parseInt(mret.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) / maxFrame;
         videoFrames = new Bitmap[maxFrame];
+
         int preloadCount = 60;
-        if (maxFrame < preloadCount) {
+        if (maxFrame < preloadCount) { // If video has less than 60 frames, load and show
             for (int i = 0; i < maxFrame; i++) {
                 videoFrames[i] = ARGBBitmap(mret.getFrameAtIndex(i));
             }
-        } else {
+        } else { // If not, use "smart load"
             long elapsedTime = System.currentTimeMillis();
             for (int i = 0; i < preloadCount; i++) {
                 videoFrames[i] = ARGBBitmap(mret.getFrameAtIndex(i));
             }
             elapsedTime = System.currentTimeMillis() - elapsedTime;
+            // Calculate loading time
             double loadTime = (int) (elapsedTime / preloadCount);
 
-            int preloadFrames;
+            int preloadFrames; // Calculate number of frames to be preloaded
             if (loadTime < (double) spf) {
                 preloadFrames = preloadCount;
             } else preloadFrames = (int) ((double) maxFrame * (loadTime - (double) spf) / loadTime);
 
+
+            // Load preload frames
             for (int i = preloadCount; i < preloadFrames; i++) {
                 videoFrames[i] = ARGBBitmap(mret.getFrameAtIndex(i));
             }
 
+            // Run async task to load left frames
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -311,6 +321,8 @@ public class BackActivity {
                 }
             });
         }
+
+        // Show frames according to video's spf
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -332,9 +344,9 @@ public class BackActivity {
 
     @SuppressLint("NewApi")
     private void setVideoFrame(boolean crop) {
-        if (frame > maxFrame - 1) frame = 0;
-        if (videoFrames == null) return;
-        if (videoFrames[frame] == null) {
+        if (frame > maxFrame - 1) frame = 0; // Loop video
+        if (videoFrames == null) return; // If video is empty, return
+        if (videoFrames[frame] == null) { // If the frame is not loaded yet, go back to the beginning
             frame = 0;
         } else {
             setImage(videoFrames[frame], crop);

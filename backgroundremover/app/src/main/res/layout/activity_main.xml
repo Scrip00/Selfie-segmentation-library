@@ -23,31 +23,48 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.madrapps.pikolo.RGBColorPicker
+            android:id="@+id/colorPicker"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
         <Button
             android:id="@+id/setVideoBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="160dp"
-            android:text="I fucked up" />
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="20dp"
+            android:text="Pick video" />
 
         <Button
             android:id="@+id/setPartyBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="80dp"
-            android:text="I have epilepsy" />
+            android:layout_marginStart="30dp"
+            android:layout_marginBottom="90dp"
+            android:text="I have epilepsy"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/setColorBtn"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="90dp"
+            android:text="Set color" />
 
         <Button
             android:id="@+id/setImageBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
+            android:layout_marginStart="30dp"
             android:layout_marginBottom="20dp"
-            android:text="Choose image" />
+            android:text="Pick image" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

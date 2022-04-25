@@ -309,7 +309,8 @@ public class BackgroundFrameProcessor implements TextureFrameProcessor, AudioDat
                     imagePacket = this.packetCreator.createGpuBuffer(frame);
                 }
 
-                if (imageBackground == null) {
+                if (imageBackground == null) { // If image is null, create image with length 1 by 1
+                    // NOTE if calculator gets background image with this length, it will not show any background
                     imageBackground = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
                     Canvas canvas = new Canvas(imageBackground);
                     Paint paint = new Paint();
@@ -321,7 +322,7 @@ public class BackgroundFrameProcessor implements TextureFrameProcessor, AudioDat
                 frame = null;
 
                 try {
-                    this.mediapipeGraph.addConsumablePacketToInputStream(this.backgroundOutputStream, backgroundImagePacket, timestamp);
+                    this.mediapipeGraph.addConsumablePacketToInputStream(this.backgroundOutputStream, backgroundImagePacket, timestamp); // Feed calculator with background
                     this.mediapipeGraph.addConsumablePacketToInputStream(this.videoInputStream, imagePacket, timestamp);
                     imagePacket = null;
                     backgroundImagePacket = null;
