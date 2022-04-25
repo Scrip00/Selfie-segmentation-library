@@ -27,9 +27,7 @@ android {
 }
 
 dependencies {
-
-    implementation fileTree('libs/backaar.aar') // Include backaar library, for background remover calculator
-    compileOnly files('libs/backaar.aar')
+    api project(':backaar') // Include backaar library for background remover calculator
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     testImplementation 'junit:junit:4.13.2'

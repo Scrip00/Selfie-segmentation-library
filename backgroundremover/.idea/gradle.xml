@@ -11,6 +11,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/backaar" />
             <option value="$PROJECT_DIR$/backgroundremoverlibrary" />
             <option value="$PROJECT_DIR$/backremlib" />
           </set>
