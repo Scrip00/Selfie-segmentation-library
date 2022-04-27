@@ -6,21 +6,21 @@
 
 ## Import library into android project
 
-In order to add the library into your android project, you should add 'jitpack.io' in your root 'buld.gradle':
+In order to add the library into your android project, you should add `jitpack.io` in your root `buld.gradle`:
 
-'''java
+```java
 allprojects {
     repositories {
         ...
         maven { url 'https://jitpack.io' }
     }
 }
-'''
+```
 
-And in module 'buld.gradle':
+And in module `buld.gradle`:
 
-'''java
+```java
 dependencies {
     implementation 'com.github.Al3xlav:Selfie-segmentation-library:1.0.3'
 }
-'''
+```
