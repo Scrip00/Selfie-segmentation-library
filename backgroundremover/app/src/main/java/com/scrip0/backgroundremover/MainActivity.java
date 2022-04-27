@@ -1,5 +1,7 @@
 package com.scrip0.backgroundremover;
 
+// Made by Scrip0
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
