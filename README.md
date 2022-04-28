@@ -101,11 +101,54 @@ and
 backActivity.setColorARGB(int a, int r, int g, int b);
 ```
 
-For more detailed code examples, check [`BackgroundRemover` example](https://github.com/Scrip00/Selfie-segmentation-library/tree/main/backgroundremover/app).
+For more detailed code examples, check `BackgroundRemover` [example](https://github.com/Scrip00/Selfie-segmentation-library/tree/main/backgroundremover/app).
 
 ## How to build library by yourself
 
-First of all, [install `Bazel` on your computer](https://docs.bazel.build/versions/main/install.html).
+First of all, [install Bazel on your computer](https://docs.bazel.build/versions/main/install.html).
+
+Clone the project with:
+
+```
+git clone https://github.com/Scrip00/Selfie-segmentation-library
+```
+
+Go to project `WORKSPACE` directory ($cd <path>). Do not porget to specify the $JAVA_HOME (export JAVA_HOME="<path to jdk>"). I used open-jdk 11 and NDK version 22 (mediapipe may not work with higher ndk versions).
+
+Finally, you can build the `backaar`, which will contain the .aar library with the graph and calculator, which later will be used in `backremlib`, by calling:
+
+```
+bazel build -c opt --strip=ALWAYS \
+--host_crosstool_top=@bazel_tools//tools/cpp:toolchain \
+--fat_apk_cpu=arm64-v8a,armeabi-v7a \
+--legacy_whole_archive=0 \
+--features=-legacy_whole_archive \
+--copt=-fvisibility=hidden \
+--copt=-ffunction-sections \
+--copt=-fdata-sections \
+--copt=-fstack-protector \
+--copt=-Oz \
+--copt=-fomit-frame-pointer \
+--copt=-DABSL_MIN_LOG_LEVEL=2 \
+--linkopt=-Wl,--gc-sections,--strip-all \
+//mediapipe/examples/android/src/java/com/google/mediapipe/apps/backaar:backaar.aar
+```
+
+Finally, you can use new .aar file by opening backgroundremover project and importing the aar in backremlib module. One of ways to do it is to place the .aar in `libs` folder and include it in module `build.gradle` with:
+
+```
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+dependencies {
+    ...
+    compile(name:'backremlib', ext:'aar')
+}
+```
+
+And sync the project.
 
 
 
