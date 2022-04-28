@@ -1,6 +1,6 @@
 ## Android selfie segmentation library by Scrip0
 
-**Backremlib** is a public open-source library, based on [Mediapipe](https://github.com/google/mediapipe).
+**Backremlib** is a public open-source library based on [Mediapipe](https://github.com/google/mediapipe).
 It is made with Java OpenCV and uses custom [portrait_segmentation graph](https://github.com/Scrip00/Selfie-segmentation-library/tree/main/mediapipe/graphs/portrait_segmentation) and [background_masking_calculator](https://github.com/Scrip00/Selfie-segmentation-library/blob/main/mediapipe/calculators/image/background_masking_calculator.cc) to perform the masking operation on mobile GPU, increasing its performance.
 
 | Image background | Video background | Color background |
@@ -36,7 +36,7 @@ To start selfie segmentation experience, create new object `BackActivity` and sp
 BackActivity backActivity = new BackActivity(context, viewGroup);
 ```
 
-Make sure to include camera permission in your module `AndroidManifest.xml` file:
+Make sure to include camera permission in your app `AndroidManifest.xml` file:
 
 ```java
 <uses-permission android:name="android.permission.CAMERA" />
@@ -101,7 +101,7 @@ and
 backActivity.setColorARGB(int a, int r, int g, int b);
 ```
 
-For more detailed code examples, check `BackgroundRemover` [example](https://github.com/Scrip00/Selfie-segmentation-library/tree/main/backgroundremover/app).
+For more detailed code examples, check `BackgroundRemover` [example app](https://github.com/Scrip00/Selfie-segmentation-library/tree/main/backgroundremover/app).
 
 ## How to build library by yourself
 
@@ -113,7 +113,7 @@ Clone the project with:
 git clone https://github.com/Scrip00/Selfie-segmentation-library
 ```
 
-Go to project `WORKSPACE` directory ($cd <path>). Do not porget to specify the $JAVA_HOME (export JAVA_HOME="<path to jdk>"). I used open-jdk 11 and NDK version 22 (mediapipe may not work with higher ndk versions).
+Go to project `WORKSPACE` directory (cd 'path'). Do not forget to specify the `$JAVA_HOME` environment variable (export JAVA_HOME="'path to your jdk'"). I used open-jdk 11 and NDK version 22 (mediapipe may not work with higher NDK versions).
 
 Finally, you can build the `backaar`, which will contain the .aar library with the graph and calculator, which later will be used in `backremlib`, by calling:
 
@@ -134,7 +134,7 @@ bazel build -c opt --strip=ALWAYS \
 //mediapipe/examples/android/src/java/com/google/mediapipe/apps/backaar:backaar.aar
 ```
 
-Finally, you can use new .aar file by opening backgroundremover project and importing the aar in backremlib module. One of ways to do it is to place the .aar in `libs` folder and include it in module `build.gradle` with:
+Finally, you can use generated .aar file by opening backgroundremover project and importing the aar in backremlib module. One of ways to do it is to place the .aar in `libs` folder and include it in module `build.gradle` with:
 
 ```
 repositories {
