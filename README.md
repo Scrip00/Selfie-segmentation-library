@@ -48,13 +48,13 @@ Override `onResume` and `onPause` methods to make sure that `BackActivity` funct
 ```java
 @Override
 protected void onResume() {
-    activity.resume();
+    backActivity.resume();
     super.onResume();
 }
 
 @Override
 protected void onPause() {
-    activity.pause();
+    backActivity.pause();
     super.onPause();
 }
 ```
@@ -89,6 +89,23 @@ Do not forget to put
 
 In your module `AndroidManifest.xml` file.
 
+There are two options to set color background:
+
+```java
+backActivity.setColor(int color);
+```
+
+and
+
+```java
+backActivity.setColorARGB(int a, int r, int g, int b);
+```
+
+For more detailed code examples, check [`BackgroundRemover` example](https://github.com/Scrip00/Selfie-segmentation-library/tree/main/backgroundremover/app).
+
+## How to build library by yourself
+
+First of all, [install `Bazel` on your computer](https://docs.bazel.build/versions/main/install.html).
 
 
 
