@@ -134,7 +134,7 @@ bazel build -c opt --strip=ALWAYS \
 //mediapipe/examples/android/src/java/com/google/mediapipe/apps/backaar:backaar.aar
 ```
 
-Finally, you can use generated .aar file by opening backgroundremover project and importing the aar in backremlib module. One of ways to do it is to place the .aar in `libs` folder and include it in module `build.gradle` with:
+Finally, you can use generated .aar file by opening your project (or backgroundremover example) with backremlib module and importing the aar in it. One of ways to do it is to place the .aar in `libs` folder and include it in library module `build.gradle` file with:
 
 ```
 repositories {
